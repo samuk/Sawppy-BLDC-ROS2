@@ -10,7 +10,7 @@
 
   <!-- Odom Frame  -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="map_ugv_odom" args="-0.02 0 0 0 0 0 map ugv_odom" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="map_odom" args="0 0 0 0 0 0 map odom" />
+  <!--<node pkg="tf2_ros" type="static_transform_publisher" name="map_odom" args="0 0 0 0 0 0 map odom" />-->
 
   <!-- Heading Listener node-->
   <node pkg="earth_rover_localization" type="heading_listener" name="heading_listener" output="log" />
@@ -22,10 +22,10 @@
   </node>
 
   <!-- EKF global node -->
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_global_localization" output="log">
+  <!--<node pkg="robot_localization" type="ekf_localization_node" name="ekf_global_localization" output="log">
     <rosparam command="load" file="$(find earth_rover_localization)/cfg/ekf_global_rover_localization.yaml" />
     <remap from="/odometry/filtered" to="/odometry/filtered/global"/>
-  </node>
+  </node>-->
 
   <!-- EKF local node -->
   <node pkg="robot_localization" type="ekf_localization_node" name="ekf_local_localization"  output="log">
@@ -34,7 +34,7 @@
   </node>
 
   <!-- Navsat_transform -->
-  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" respawn="true" output="screen">
+<!--  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" respawn="true" output="screen">
      <param name="frequency" value="30"/>
      <param name="delay" value="3.0"/>
      <param name="magnetic_declination_radians" value="0.0"/>
@@ -48,6 +48,6 @@
 
      <remap from="/odometry/filtered" to="/odometry/filtered/global/corrected_latency"/>
      <remap from="/gps/fix" to="/piksi_receiver/navsatfix_best_fix/corrected_latency"/>
-   </node>
+   </node>-->
 
  </launch>
