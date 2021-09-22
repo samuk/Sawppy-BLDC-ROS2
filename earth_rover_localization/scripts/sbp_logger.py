@@ -95,16 +95,16 @@ def radio_corrections():
                         rospy.loginfo("Radio, %i, %i, None", radio_tow, msg.msg_type)
 
                     udp.call(msg)
-                    
+
             except KeyboardInterrupt:
                 pass
 
 
 if __name__ == '__main__':
-    rospy.init_node('sbp_arbitrator', anonymous=True)
-    p1 = Process(target=ntrip_corrections)
-    p1.start()
+    rospy.init_node('sbp_logger', anonymous=True)
+    #p1 = Process(target=ntrip_corrections)
+    #p1.start()
     p2 = Process(target=radio_corrections)
     p2.start()
-    p1.join()
+    #p1.join()
     p2.join()
