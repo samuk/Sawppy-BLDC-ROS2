@@ -25,11 +25,12 @@ from sbp.observation import SBP_MSG_EPHEMERIS_BDS, MsgEphemerisBds, SBP_MSG_EPHE
 #SBP_MSG_EPHEMERIS_GPS, MsgEphemerisGps
 import argparse
 
-class MsgObsWithPayload:
-    def __init__(self, msg_obs, payload, source):
-        self.msg_obs = msg_obs
+class MsgObsWithPayload(MsgObs):
+    def __init__(self, msg, payload, length, crc):
+        super(MsgObsWithPayload, self).__init__(msg)
+        self.length = length
         self.payload = payload
-        self.source = source
+        self.crc = crc
 
 # NTRIP host
 NTRIP_HOST = rospy.get_param('/sbp_arbitrator/ntrip_host', "rtk2go.com")
@@ -80,95 +81,52 @@ def ntrip_corrections(q_ntrip):
 
         # Arbitrate msg 74
         elif sbp_general_msg.msg_type == 74:
-            #sbp_msg = MsgObs(sbp_general_msg)
             global ntrip_sender # get ntrip sender id
             if ntrip_sender is None:
                 ntrip_sender = sbp_general_msg.sender
             q_ntrip.put(sbp_general_msg)
-            print("Putting ntrip msg on queue")
+            #e.set()
+            #print("Setting event")
+            #print("Putting ntrip msg on queue")
 
 def radio_corrections(q_radio):
-    # last_radio_epoch = None
-    # radio_epoch = None
-    # # messages to be sent next time
-    # radio_msgs_to_send = []
-    # #rospy.sleep(1.5)
-    # i = 0
-    # while True:
-    #     q_radio.put(i)
-    #     #print(d)
-    #     #print(len(d))
-    #     #print(str(d.msg_type) + " " + str(d.header.n_obs) + " " + str(d.header.t.tow))
-    #     i += 1
-    #     rospy.sleep(0.5)
-
+    sbp_msg_types = [SBP_MSG_OBS, SBP_MSG_GLO_BIASES, SBP_MSG_BASE_POS_ECEF, SBP_MSG_EPHEMERIS_BDS, SBP_MSG_EPHEMERIS_GAL, SBP_MSG_EPHEMERIS_GLO, SBP_MSG_EPHEMERIS_QZSS]
+    global radio_sender # get radio sender id
     with PySerialDriver(RADIO_PORT, baud=RADIO_BAUDRATE) as driver:
         print(driver.read)
         with Handler(Framer(driver.read, None, verbose=False)) as source:
             try:
-                for msg, metadata in source.filter([SBP_MSG_OBS, SBP_MSG_GLO_BIASES, SBP_MSG_BASE_POS_ECEF]):
-                    # change radio sender ID to ntrip to avoid temporal glitch
-                    msg.sender = 65202
-                    # update epoch
-                    if msg.msg_type == 74:
-                        radio_epoch = radio_tow = msg.header.t.tow
-                    # break msgs into epochs
-                    if last_radio_epoch is not None and radio_epoch > last_radio_epoch:
-                        q.acquire()
-                        last_tow = q.value
-                        q.release()
-                        # send radio msg only if its tow is greater than the latest registered tow
-                        if radio_tow > last_tow:
-                            q.acquire()
-                            q.value = radio_tow
-                            q.release()
-                            print("RADIO msg sent for epoch: ", radio_tow)
-                            n_seq = 0
-                            n_glo = 0
-                            for x in radio_msgs_to_send:
-                                udp.call(x) # send msg to the piksi through udp
-                                if x.msg_type == 74:
-                                    n_seq += 1
-                                    seq = x.header.n_obs
-                                    tow2print = radio_tow
-                                if x.msg_type == 117:
-                                    n_glo +=1
-                                else:
-                                    seq = None
-                                    tow2print = None
-                                print("    Radio", x.msg_type, seq, tow2print)
-                            print("===============================")
-                            rospy.loginfo("Radio, %i, %i, %i", radio_tow, n_seq, n_glo)
-                        #elif radio_tow <= last_tow:
-                            #print("Ignoring radio msg with old tow")
-                            #print("===============================")
-                        radio_msgs_to_send = []
-                        radio_msgs_to_send.append(msg)
-                    else:
-                        if radio_epoch is not None:
-                            radio_msgs_to_send.append(msg)
-                    last_radio_epoch = radio_epoch
+                for sbp_general_msg, metadata in source.filter(sbp_msg_types):
+                    if sbp_general_msg.msg_type == (72, 117, 137, 138, 139, 141, 142):
+                        sbp_general_msg.sender = 0
+                        udp.call(sbp_general_msg)
+                    elif sbp_general_msg.msg_type == 74:
+                        if radio_sender is None:
+                            radio_sender = sbp_general_msg.sender
+                        q_radio.put(sbp_general_msg)
+                        #e.set()
+
             except KeyboardInterrupt:
                 pass
 
-def parse_msg(msg):
-    if msg.msg_type == 72:
-        sbp_msg = MsgBasePosECEF(msg)
-    elif msg.msg_type == 74:
-        sbp_msg = MsgObs(msg)
-    elif msg.msg_type == 117:
-        sbp_msg = MsgGloBiases(msg)
-    elif msg.msg_type == 137:
-        sbp_msg = MsgEphemerisBds(msg)
-    #if msg.msg_type == 138: ## cannot compile !!!!!!!!!!!!!!!!!!!!!!!
-    #    sbp_msg = MsgEphemerisGps(sbp_general_msg)
-    elif msg.msg_type == 139:
-        sbp_msg = MsgEphemerisGlo(msg)
-    elif msg.msg_type == 141:
-        sbp_msg = MsgEphemerisGal(msg)
-    elif msg.msg_type == 142:
-        sbp_msg = MsgEphemerisQzss(msg)
-    return sbp_msg
+# def parse_msg(msg):
+#     if msg.msg_type == 72:
+#         sbp_msg = MsgBasePosECEF(msg)
+#     elif msg.msg_type == 74:
+#         sbp_msg = MsgObs(msg)
+#     elif msg.msg_type == 117:
+#         sbp_msg = MsgGloBiases(msg)
+#     elif msg.msg_type == 137:
+#         sbp_msg = MsgEphemerisBds(msg)
+#     #if msg.msg_type == 138: ## cannot compile !!!!!!!!!!!!!!!!!!!!!!!
+#     #    sbp_msg = MsgEphemerisGps(sbp_general_msg)
+#     elif msg.msg_type == 139:
+#         sbp_msg = MsgEphemerisGlo(msg)
+#     elif msg.msg_type == 141:
+#         sbp_msg = MsgEphemerisGal(msg)
+#     elif msg.msg_type == 142:
+#         sbp_msg = MsgEphemerisQzss(msg)
+#     return sbp_msg
 
 def get_queue_msgs(queue):
     msg_list = []
@@ -177,32 +135,43 @@ def get_queue_msgs(queue):
     return msg_list
 
 def get_packet_index(msg):
-    packet = hex(msg.msg_obs.header.n_obs)
+    packet = hex(msg.header.n_obs)
     return int(packet[2]), int(packet[3])
 
 def check_existing_msgs(msg_list, new_msg):
+    existing_message = False
     if not msg_list:
         msg_list.append(new_msg)
     else:
         for msg in msg_list:
             [_, msg_packet_index] = get_packet_index(msg)
             [_, new_msg_packet_index] = get_packet_index(new_msg)
-            if msg.msg_obs.header.t.tow == new_msg.msg_obs.header.t.tow and new_msg_packet_index == msg_packet_index:
-                #sanity check
-                if msg.payload == new_msg.payload:
-                    break
-                else:
-                    rospy.logwarn("Received 2 equivalent messages with the same PAYLOAD")
-            else:
-                #add msg to list
-                msg_list.append(new_msg)
+            if msg.header.t.tow == new_msg.header.t.tow and new_msg_packet_index == msg_packet_index:
+                existing_message = True
+                if msg.payload != new_msg.payload: #sanity check
+                    rospy.logwarn("Received 2 equivalent messages with different PAYLOAD")
+                break
+        if existing_message == False:
+            msg_list.append(new_msg)
     return msg_list
+
+def get_sender(msg):
+    if msg.sender == ntrip_sender:
+        sender = "Ntrip"
+    elif msg.sender == radio_sender:
+        sender = "Radio"
+    else:
+        rospy.loginfo("Wrong sender definition: " + str(msg.sender))
+    return sender
+
 
 if __name__ == '__main__':
     rospy.init_node('sbp_arbitrator', anonymous=True)
     ntrip_sender = None
+    radio_sender = None
     q_ntrip = queue.Queue()
     q_radio = queue.Queue()
+    #e = threading.Event()
 
     th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
     th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
@@ -211,53 +180,102 @@ if __name__ == '__main__':
     th2.start()
 
     msgs_to_evaluate = []
+    ntrip_msgs = []
+    radio_msgs = []
     prev_tow = 0
+    prev_length = 0
     expected_packet = 0
     epoch_timeout = 5 # number of seconds to wait until timout
+    timeout = False
 
     # Arbitrate
     while True:
+        #e.wait(5)
+        #print("Event received")
         #trigger interruptions from ntrip and radio process??
-        ntrip_msgs = get_queue_msgs(q_ntrip)
-        radio_msgs = get_queue_msgs(q_radio
+        while len(ntrip_msgs)==0 and len(radio_msgs)==0:
+        #while not radio_msgs and ntrip_msgs:
+        #while not radio_msgs:
+            ntrip_msgs = get_queue_msgs(q_ntrip)
+            radio_msgs = get_queue_msgs(q_radio)
+            #e.clear()
+        # if radio_msgs:
+        #     print("============== RADIO MSGS ==========================")
+        #     for msg in radio_msgs:
+        #         print(str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+        #     print("========================================")
 
-        # Evaluate ntrip tow and check if msg is repeated
+
+        # if msgs_to_evaluate:
+        #     print("================= PREV VALUATE MSGS =======================")
+        #     for msg in msgs_to_evaluate:
+        #         print(str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+        #     print("========================================")
+
+        #Evaluate ntrip tow and check if msg is repeated
         for msg in ntrip_msgs:
-            msg_obs_with_payload = MsgObsWithPayload(parse_msg(msg), msg.payload, "Ntrip")
-            if msg_obs_with_payload.msg_obs.header.t.tow >= prev_tow:
-                msgs_to_evaluate = check_existing_msgs(msgs_to_evaluate, msg_obs_with_payload)
+            full_msg = MsgObsWithPayload(msg, msg.payload, msg.length, msg.crc)
+            if full_msg.header.t.tow >= prev_tow:
+                msgs_to_evaluate = check_existing_msgs(msgs_to_evaluate, full_msg)
 
-        # Evaluate radio tow and check if msg is repeated
+            # Evaluate radio tow and check if msg is repeated
+
         for msg in radio_msgs:
-            msg_obs_with_payload = MsgObsWithPayload(parse_msg(msg), msg.payload, "Radio")
-            if msg_obs_with_payload.msg_obs.header.t.tow >= prev_tow:
-                msgs_to_evaluate = check_existing_msgs(msgs_to_evaluate, msg_obs_with_payload)
+            if msg.header.t.tow >= prev_tow:
+                msgs_to_evaluate = check_existing_msgs(msgs_to_evaluate, msg)
+
+        # if msgs_to_evaluate:
+        #     print("================= EVALUATE MSGS =======================")
+        #     for msg in msgs_to_evaluate:
+        #         print(str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+        #     print("========================================")
+
 
         # Order messages
-        msgs_to_evaluate.sort(key=operator.attrgetter('msg_obs.header.t.tow', 'msg_obs.header.n_obs'))
+        msgs_to_evaluate.sort(key=operator.attrgetter('header.t.tow', 'header.n_obs'))
+
+
+        # if msgs_to_evaluate:
+        #     print("================= EVALUATE MSGS =======================")
+        #     for msg in msgs_to_evaluate:
+        #         print(get_sender(msg) + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+        #     print("========================================")
 
         # Evaluate msgs to send
         for msg in msgs_to_evaluate:
             packet_seq, packet_index = get_packet_index(msg) # get the index of the packet (starting at 0)
-            if msg.msg_obs.header.t.tow == prev_tow:
+            # if for some reason tow is smaller remove??
+            if msg.header.t.tow < prev_tow:
+                msgs_to_evaluate.remove(msg)
+            if msg.header.t.tow == prev_tow and expected_packet!=0 and timeout==False:
                 if packet_index == expected_packet:
-                    udp.call(msg.msg_obs)
-                    rospy.loginfo(str(msg.source) + ", " + str(msg.msg_obs.header.t.tow) + ", " + str(packet_index) + ", " + str(packet_seq))
+                    sender = get_sender(msg)
+                    msg.sender = 0
+                    udp.call(msg)
+                    rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(packet_index) + ", " + str(packet_seq))
                     msgs_to_evaluate.remove(msg)
                     if packet_index == packet_seq - 1:
                         expected_packet = 0 #sequence is complete
                         rospy.loginfo("Sequence is complete")
                     else:
                         expected_packet += 1
-                else:
-                    if abs((prev_tow - msg.msg_obs.header.t.tow)/1000) >= epoch_timeout:
-                        rospy.loginfo("Epoch timeout")
-                        expected_packet = 0 # did not receive complete sequence, continue with next epoch after waiting hist_length
-            elif expected_packet == 0 and msg.msg_obs.header.t.tow >= prev_tow:
-                if packet_index == 0: #new epoch
-                    print("In here")
-                    udp.call(msg.msg_obs)
-                    rospy.loginfo(str(msg.source) + ", " + str(msg.msg_obs.header.t.tow) + ", " + str(packet_index) + ", " + str(packet_seq))
+            elif msg.header.t.tow >= prev_tow:
+                timeout = False #move somewhere else?
+                if expected_packet == 0 and packet_index == 0: #new epoch
+                    sender = get_sender(msg)
+                    msg.sender = 0
+                    udp.call(msg)
+                    rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(packet_index) + ", " + str(packet_seq))
                     msgs_to_evaluate.remove(msg) # remove message from list
                     expected_packet += 1
-                    prev_tow = msg.msg_obs.header.t.tow
+                    prev_tow = msg.header.t.tow
+                else:
+                    diff = abs((prev_tow - msg.header.t.tow)/1000)
+                    if diff >= epoch_timeout and timeout==False:
+                        rospy.loginfo("Epoch timeout: " + str(diff))
+                        timeout = True
+                        expected_packet = 0 # did not receive complete sequence, continue with next epoch after waiting hist_length
+        #prev_length = len(msgs_to_evaluate)
+        # print("Prev tow" + str(prev_tow))
+        radio_msgs = []
+        ntrip_msgs = []
