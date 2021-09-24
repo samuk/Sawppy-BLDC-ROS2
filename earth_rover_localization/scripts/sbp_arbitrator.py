@@ -22,6 +22,9 @@ from sbp.client.drivers.pyserial_driver import PySerialDriver
 from sbp.client import Handler, Framer
 from sbp.client.loggers.json_logger import JSONLogger
 import argparse
+from sbp.observation import SBP_MSG_OBS, MsgObs, SBP_MSG_GLO_BIASES, MsgGloBiases, SBP_MSG_BASE_POS_ECEF, MsgBasePosECEF
+from sbp.observation import SBP_MSG_EPHEMERIS_BDS, MsgEphemerisBds, SBP_MSG_EPHEMERIS_GAL, MsgEphemerisGal, SBP_MSG_EPHEMERIS_GLO, MsgEphemerisGlo, SBP_MSG_EPHEMERIS_QZSS, MsgEphemerisQzss
+#SBP_MSG_EPHEMERIS_GPS, MsgEphemerisGps
 
 obs_messages = {}
 
@@ -50,6 +53,13 @@ def get_current_time():
 # convert a MsgObs object into number of seconds since GPS epoch
 def get_full_time(msg):
     return msg.header.t.wn * 7 * 24 * 60 * 60 + msg.header.t.tow / 1000
+
+#get msgs from queue object
+def get_queue_msgs(queue):
+    msg_list = []
+    while not queue.empty():
+         msg_list.append(queue.get())
+    return msg_list
 
 # try and add 'msg' (of type MsgObs) to obs_messages
 def obs_message_add(msg):
@@ -99,8 +109,6 @@ def obs_message_remove_expired(full_time):
 def multiplex(msg):
     global last_sent_time
 
-    msg.sender = 0 # overwrite sender ID
-
     if msg.msg_type == sbp.observation.SBP_MSG_OBS:
         # we need to fully decode the message if not just forwarding it
         msg = dispatch(msg)
@@ -115,12 +123,15 @@ def multiplex(msg):
                 last_sent_time = full_time
     else:
         # not MSG_OBS, forward immediately
+        msg.sender = 0 # overwrite sender ID
         send_messages_via_udp([msg])
 
 def send_messages_via_udp(msgs):
     for msg in msgs:
-        udp.call(msg)
-        rospy.loginfo("Nrip" + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+        sender = get_sender((msg))
+        msg.sender = 0 # overwrite sender ID
+        udp.call(msg) #msg.to_binary()
+        rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
         #print(msg.to_json())
         # use this to output as SBP instead:
         # sys.stdout.buffer.write(msg.to_binary())
@@ -204,14 +215,13 @@ if __name__ == '__main__':
     q_radio = queue.Queue()
 
     th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
-    th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
+    #th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
 
     th1.start()
-    th2.start()
+    #th2.start()
 
     ntrip_msgs = []
     radio_msgs = []
-    expected_packet = 0
     #epoch_timeout = 5 # number of seconds to wait until timout
 
     # Arbitrate

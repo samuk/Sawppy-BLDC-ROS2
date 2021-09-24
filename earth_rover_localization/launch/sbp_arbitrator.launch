@@ -4,7 +4,7 @@
       <!-- Ntrip params -->
       <param name="ntrip_host" value="rtk2go.com" />
       <param name="ntrip_port" value="2101" />
-      <param name="ntrip_mount_point" value="ER_Valldoreix_1" />
+      <param name="ntrip_mount_point" value="ER_Pollybell_1" />
       <!-- Radio params -->
       <param name="radio_port" value="/dev/freewaveGXMT14" />
       <param name="radio_baudrate" value="115200" />
