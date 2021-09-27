@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-#https://stackoverflow.com/questions/34337514/updated-variable-into-multiprocessing-python
-#https://stackoverflow.com/questions/44219288/should-i-bother-locking-the-queue-when-i-put-to-or-get-from-it/44219646
 import rospy
 import os
 import datetime
@@ -23,9 +21,6 @@ from sbp.client.drivers.pyserial_driver import PySerialDriver
 from sbp.client import Handler, Framer
 from sbp.client.loggers.json_logger import JSONLogger
 import argparse
-from sbp.observation import SBP_MSG_OBS, MsgObs, SBP_MSG_GLO_BIASES, MsgGloBiases, SBP_MSG_BASE_POS_ECEF, MsgBasePosECEF
-from sbp.observation import SBP_MSG_EPHEMERIS_BDS, MsgEphemerisBds, SBP_MSG_EPHEMERIS_GAL, MsgEphemerisGal, SBP_MSG_EPHEMERIS_GLO, MsgEphemerisGlo, SBP_MSG_EPHEMERIS_QZSS, MsgEphemerisQzss
-#SBP_MSG_EPHEMERIS_GPS, MsgEphemerisGps
 
 obs_messages = {}
 
@@ -142,20 +137,23 @@ def send_messages_via_udp(msgs):
         udp.call(msg) # udp logger packs the msgs to binary before sending
 
 def get_sender(msg):
-    if msg.sender == ntrip_sender:
-        sender = "Ntrip"
-    elif msg.sender == radio_sender:
-        sender = "Radio"
+    if ntrip_sender is None or radio_sender is None:
+        sender = "TBD"
     else:
-        sender = str(msg.sender)
-        rospy.logwarn("Wrong sender definition: " + sender)
+        if msg.sender == ntrip_sender:
+            sender = "Ntrip"
+        elif msg.sender == radio_sender:
+            sender = "Radio"
+        else:
+            sender = str(msg.sender)
+            rospy.logwarn("Wrong sender definition: " + sender)
     return sender
 
 def ntrip_corrections(q_ntrip):
     # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
     global ntrip_sender
     str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
-    rtcm3tosbp_cmd = ["rtcm3tosbp"]#, "-d", "{}:{}".format(*get_current_time())]
+    rtcm3tosbp_cmd = ["rtcm3tosbp", "-d", get_current_time()]
     cmd = "{} 2>/dev/null| {} | sbp2json".format(' '.join(str2str_cmd), ' '.join(rtcm3tosbp_cmd))
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -176,20 +174,24 @@ def ntrip_corrections(q_ntrip):
         # parse sbp msgs
         sbp_msg = sbp.msg.SBP.from_json_dict(json_msg)
 
-        if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and ntrip_sender is None:
+        if sbp_msg.msg_type == (sbp.observation.SBP_MSG_OBS) and ntrip_sender is None:
             ntrip_sender = sbp_msg.sender # get ntrip sender id
 
         q_ntrip.put(sbp_msg)
 
 
 def radio_corrections(q_radio):
-    sbp_msg_types = [SBP_MSG_OBS, SBP_MSG_GLO_BIASES, SBP_MSG_BASE_POS_ECEF, SBP_MSG_EPHEMERIS_BDS, SBP_MSG_EPHEMERIS_GAL, SBP_MSG_EPHEMERIS_GLO, SBP_MSG_EPHEMERIS_QZSS]
     global radio_sender # get radio sender id
     with PySerialDriver(RADIO_PORT, baud=RADIO_BAUDRATE) as driver:
         print(driver.read)
         with Handler(Framer(driver.read, None, verbose=False)) as source:
             try:
-                for sbp_msg, metadata in source.filter(sbp_msg_types):
+                for sbp_msg, metadata in source.filter():
+                    if radio_sender is None:
+                        try:
+                            radio_sender = sbp_msg.sender
+                        except ValueError:
+                            continue
                     if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and radio_sender is None:
                         radio_sender = sbp_msg.sender
                     q_radio.put(sbp_msg)
