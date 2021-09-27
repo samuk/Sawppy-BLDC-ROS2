@@ -109,7 +109,7 @@ def obs_message_remove_expired(full_time):
         del obs_messages[t]
 
 # 'msg' was just received from an input stream, check if it completes a sequence
-def multiplex(msg, udp):
+def multiplex(msg):
     global last_sent_time
 
     if msg.msg_type == sbp.observation.SBP_MSG_OBS:
@@ -121,15 +121,16 @@ def multiplex(msg, udp):
             # check if we now have a complete sequence as a result of adding the message
             msg_sequence = obs_message_get_sequence(full_time)
             if msg_sequence is not None:
-                send_messages_via_udp(msg_sequence, udp)
+                send_messages_via_udp(msg_sequence)
                 obs_message_remove_expired(full_time)
                 last_sent_time = full_time
     else:
         # not MSG_OBS, forward immediately
         msg.sender = 0 # overwrite sender ID
-        send_messages_via_udp([msg], udp)
+        send_messages_via_udp([msg])
 
-def send_messages_via_udp(msgs, udp):
+def send_messages_via_udp(msgs):
+    global udp
     for msg in msgs:
         if msg.msg_type == sbp.observation.SBP_MSG_OBS:
             sender = get_sender(msg)
@@ -215,6 +216,6 @@ if __name__ == '__main__':
             radio_msgs = get_queue_msgs(q_radio)
 
         for msg in ntrip_msgs + radio_msgs:
-                multiplex(msg, udp)
+                multiplex(msg)
         ntrip_msgs = []
         radio_msgs = []
