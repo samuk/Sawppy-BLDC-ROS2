@@ -147,6 +147,7 @@ def get_sender(msg):
 
 def ntrip_corrections(q_ntrip):
     # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
+    global ntrip_sender
     str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
     rtcm3tosbp_cmd = ["rtcm3tosbp", "-d", "{}:{}".format(*get_current_time())]
     cmd = "{} 2>/dev/null| {} | sbp2json".format(' '.join(str2str_cmd), ' '.join(rtcm3tosbp_cmd))
@@ -170,7 +171,6 @@ def ntrip_corrections(q_ntrip):
         sbp_msg = sbp.msg.SBP.from_json_dict(json_msg)
 
         if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and ntrip_sender is None:
-            global ntrip_sender
             ntrip_sender = sbp_msg.sender # get ntrip sender id
 
         q_ntrip.put(sbp_msg)
