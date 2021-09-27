@@ -31,6 +31,8 @@ obs_messages = {}
 
 # full time of last message sequence sent via UDP
 last_sent_time = None
+ntrip_sender = None
+radio_sender = None
 
 # NTRIP host
 NTRIP_HOST = rospy.get_param('/sbp_arbitrator/ntrip_host', "rtk2go.com")
@@ -107,7 +109,7 @@ def obs_message_remove_expired(full_time):
         del obs_messages[t]
 
 # 'msg' was just received from an input stream, check if it completes a sequence
-def multiplex(msg):
+def multiplex(msg, udp):
     global last_sent_time
 
     if msg.msg_type == sbp.observation.SBP_MSG_OBS:
@@ -119,15 +121,15 @@ def multiplex(msg):
             # check if we now have a complete sequence as a result of adding the message
             msg_sequence = obs_message_get_sequence(full_time)
             if msg_sequence is not None:
-                send_messages_via_udp(msg_sequence)
+                send_messages_via_udp(msg_sequence, udp)
                 obs_message_remove_expired(full_time)
                 last_sent_time = full_time
     else:
         # not MSG_OBS, forward immediately
         msg.sender = 0 # overwrite sender ID
-        send_messages_via_udp([msg])
+        send_messages_via_udp([msg], udp)
 
-def send_messages_via_udp(msgs):
+def send_messages_via_udp(msgs, udp):
     for msg in msgs:
         if msg.msg_type == sbp.observation.SBP_MSG_OBS:
             sender = get_sender(msg)
@@ -149,7 +151,7 @@ def ntrip_corrections(q_ntrip):
     # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
     global ntrip_sender
     str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
-    rtcm3tosbp_cmd = ["rtcm3tosbp", "-d", "{}:{}".format(*get_current_time())]
+    rtcm3tosbp_cmd = ["rtcm3tosbp"]#, "-d", "{}:{}".format(*get_current_time())]
     cmd = "{} 2>/dev/null| {} | sbp2json".format(' '.join(str2str_cmd), ' '.join(rtcm3tosbp_cmd))
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -194,8 +196,6 @@ def radio_corrections(q_radio):
 if __name__ == '__main__':
     rospy.init_node('sbp_arbitrator', anonymous=True)
 
-    ntrip_sender = None
-    radio_sender = None
     q_ntrip = queue.Queue()
     q_radio = queue.Queue()
 
@@ -215,6 +215,6 @@ if __name__ == '__main__':
             radio_msgs = get_queue_msgs(q_radio)
 
         for msg in ntrip_msgs + radio_msgs:
-                multiplex(msg)
+                multiplex(msg, udp)
         ntrip_msgs = []
         radio_msgs = []
