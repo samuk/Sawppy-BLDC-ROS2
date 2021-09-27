@@ -131,11 +131,13 @@ def multiplex(msg):
 
 def send_messages_via_udp(msgs):
     for msg in msgs:
+        sender = get_sender(msg) # get sender
+        # Change radio sender id to ntrip
+        if sender == "Radio":
+            msg.sender = ntrip_sender
+        #log obs messages to ROS
         if msg.msg_type == sbp.observation.SBP_MSG_OBS:
-            sender = get_sender(msg)
             rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
-            if sender == "Radio":
-                msg.sender = ntrip_sender
         #msg.sender = 0 # overwrite sender ID
         udp.call(msg) # udp logger packs the msgs to binary before sending
 
