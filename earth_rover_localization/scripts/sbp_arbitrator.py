@@ -128,13 +128,10 @@ def multiplex(msg):
 
 def send_messages_via_udp(msgs):
     for msg in msgs:
-        sender = get_sender((msg))
+        sender = get_sender(msg)
         msg.sender = 0 # overwrite sender ID
-        udp.call(msg) #msg.to_binary()
+        udp.call(msg) # udp logger packs the msgs to binary before sending
         rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
-        #print(msg.to_json())
-        # use this to output as SBP instead:
-        # sys.stdout.buffer.write(msg.to_binary())
 
 def get_sender(msg):
     if msg.sender == ntrip_sender:
@@ -195,14 +192,14 @@ def radio_corrections(q_radio):
         with Handler(Framer(driver.read, None, verbose=False)) as source:
             try:
                 for sbp_general_msg, metadata in source.filter(sbp_msg_types):
-                    if sbp_general_msg.msg_type == (72, 117, 137, 138, 139, 141, 142):
-                        sbp_general_msg.sender = 0
-                        udp.call(sbp_general_msg)
-                    elif sbp_general_msg.msg_type == 74:
+                    if sbp_general_msg.msg_type == 74:
                         if radio_sender is None:
                             radio_sender = sbp_general_msg.sender
                         q_radio.put(sbp_general_msg)
-                        #rospy.loginfo(">>>>>>>>>>>>> Received in radio: " + str(sbp_general_msg.header.t.tow) + ", " + str(sbp_general_msg.header.n_obs))
+                    else:
+                        sbp_general_msg.sender = 0
+                        udp.call(sbp_general_msg)
+
             except KeyboardInterrupt:
                 pass
 
@@ -215,14 +212,13 @@ if __name__ == '__main__':
     q_radio = queue.Queue()
 
     th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
-    #th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
+    th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
 
     th1.start()
-    #th2.start()
+    th2.start()
 
     ntrip_msgs = []
     radio_msgs = []
-    #epoch_timeout = 5 # number of seconds to wait until timout
 
     # Arbitrate
     while not rospy.is_shutdown():
