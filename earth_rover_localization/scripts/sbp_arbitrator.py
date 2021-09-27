@@ -12,7 +12,8 @@ import sys
 import time
 import operator
 
-import threading, queue
+import threading
+import Queue as queue
 from multiprocessing import Process, Value
 from multiprocessing.managers import BaseManager
 
@@ -128,10 +129,11 @@ def multiplex(msg):
 
 def send_messages_via_udp(msgs):
     for msg in msgs:
-        sender = get_sender(msg)
+        if msg.msg_type == sbp.observation.SBP_MSG_OBS:
+            sender = get_sender(msg)
+            rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
         msg.sender = 0 # overwrite sender ID
         udp.call(msg) # udp logger packs the msgs to binary before sending
-        rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
 
 def get_sender(msg):
     if msg.sender == ntrip_sender:
@@ -143,15 +145,10 @@ def get_sender(msg):
         rospy.logwarn("Wrong sender definition: " + sender)
     return sender
 
-def get_packet_index(msg):
-    packet = hex(msg.header.n_obs)
-    return int(packet[2]), int(packet[3])
-
 def ntrip_corrections(q_ntrip):
     # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
     str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
-    rtcm3tosbp_cmd = ["rtcm3tosbp", "-w", "{}:{}".format(*get_current_time())]
-    rtcm3tosbp_cmd = ["rtcm3tosbp"]#, "-d", get_current_time()]
+    rtcm3tosbp_cmd = ["rtcm3tosbp", "-d", "{}:{}".format(*get_current_time())]
     cmd = "{} 2>/dev/null| {} | sbp2json".format(' '.join(str2str_cmd), ' '.join(rtcm3tosbp_cmd))
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -170,19 +167,14 @@ def ntrip_corrections(q_ntrip):
             continue
 
         # parse sbp msgs
-        sbp_general_msg = sbp.msg.SBP.from_json_dict(json_msg)
+        sbp_msg = sbp.msg.SBP.from_json_dict(json_msg)
 
-        # Mandatory to send msg 72, optional to send msg 117, 137, 138, 139, 141, 142
-        if sbp_general_msg.msg_type == (72, 117, 137, 138, 139, 141, 142):
-            sbp_general_msg.sender = 0
-            udp.call(sbp_general_msg)
+        if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and ntrip_sender is None:
+            global ntrip_sender
+            ntrip_sender = sbp_msg.sender # get ntrip sender id
 
-        # Arbitrate msg 74
-        elif sbp_general_msg.msg_type == 74:
-            global ntrip_sender # get ntrip sender id
-            if ntrip_sender is None:
-                ntrip_sender = sbp_general_msg.sender
-            q_ntrip.put(sbp_general_msg)
+        q_ntrip.put(sbp_msg)
+
 
 def radio_corrections(q_radio):
     sbp_msg_types = [SBP_MSG_OBS, SBP_MSG_GLO_BIASES, SBP_MSG_BASE_POS_ECEF, SBP_MSG_EPHEMERIS_BDS, SBP_MSG_EPHEMERIS_GAL, SBP_MSG_EPHEMERIS_GLO, SBP_MSG_EPHEMERIS_QZSS]
@@ -191,14 +183,10 @@ def radio_corrections(q_radio):
         print(driver.read)
         with Handler(Framer(driver.read, None, verbose=False)) as source:
             try:
-                for sbp_general_msg, metadata in source.filter(sbp_msg_types):
-                    if sbp_general_msg.msg_type == 74:
-                        if radio_sender is None:
-                            radio_sender = sbp_general_msg.sender
-                        q_radio.put(sbp_general_msg)
-                    else:
-                        sbp_general_msg.sender = 0
-                        udp.call(sbp_general_msg)
+                for sbp_msg, metadata in source.filter(sbp_msg_types):
+                    if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and radio_sender is None:
+                        radio_sender = sbp_msg.sender
+                    q_radio.put(sbp_msg)
 
             except KeyboardInterrupt:
                 pass
