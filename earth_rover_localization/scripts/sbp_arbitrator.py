@@ -126,16 +126,17 @@ def multiplex(msg):
                 last_sent_time = full_time
     else:
         # not MSG_OBS, forward immediately
-        msg.sender = 0 # overwrite sender ID
+        # msg.sender = 0 # overwrite sender ID
         send_messages_via_udp([msg])
 
 def send_messages_via_udp(msgs):
-    global udp
     for msg in msgs:
         if msg.msg_type == sbp.observation.SBP_MSG_OBS:
             sender = get_sender(msg)
             rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
-        msg.sender = 0 # overwrite sender ID
+            if sender == "Radio":
+                msg.sender = ntrip_sender
+        #msg.sender = 0 # overwrite sender ID
         udp.call(msg) # udp logger packs the msgs to binary before sending
 
 def get_sender(msg):
