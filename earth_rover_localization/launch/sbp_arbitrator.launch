@@ -8,9 +8,11 @@
       <!-- Radio params -->
       <param name="radio_port" value="/dev/freewaveGXMT14" />
       <param name="radio_baudrate" value="115200" />
-        <!-- Udp params -->
+      <!-- Udp params -->
       <param name="udp_address" value="192.168.8.222" />
       <param name="udp_port" value="55558" />
+      <!-- Enable debugging options -->
+      <param name="debug" value="True" />
     </node>
 
 </launch>

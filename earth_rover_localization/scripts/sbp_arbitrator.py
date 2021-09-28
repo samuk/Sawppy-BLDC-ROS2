@@ -39,20 +39,22 @@ RADIO_BAUDRATE = rospy.get_param('/sbp_arbitrator/radio_baudrate', 115200)
 # UDP LOGGER
 UDP_ADDRESS = rospy.get_param('/sbp_arbitrator/udp_address', "192.168.8.222")
 UDP_PORT =  rospy.get_param('/sbp_arbitrator/udp_port', 55558)
+debug = rospy.get_param('/sbp_arbitrator/debug', False)
 
 # create instance of UdpLogger object
 udp = UdpLogger(UDP_ADDRESS, UDP_PORT)
 
 # txt files for msg logging
-HOME = os.getenv('HOME')
-now = datetime.datetime.utcnow()
-txt_time = now.strftime("%Y%m%d%H%M%S")
-ntrip_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_ntrip.txt"
-radio_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_radio.txt"
-arb_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_arbitrator.txt"
-ntrip_txt_file = open(ntrip_file_path, "a")
-radio_txt_file = open(radio_file_path, "a")
-arb_txt_file = open(arb_file_path, "a")
+if debug:
+    HOME = os.getenv('HOME')
+    now = datetime.datetime.utcnow()
+    txt_time = now.strftime("%Y%m%d%H%M%S")
+    ntrip_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_ntrip.txt"
+    radio_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_radio.txt"
+    arb_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_arbitrator.txt"
+    ntrip_txt_file = open(ntrip_file_path, "a")
+    radio_txt_file = open(radio_file_path, "a")
+    arb_txt_file = open(arb_file_path, "a")
 
 # get current year:month:day:hour
 def get_current_time():
@@ -142,7 +144,7 @@ def send_messages_via_udp(msgs):
         if sender == "Radio" and ntrip_sender is not None:
             msg.sender = ntrip_sender
         #log obs messages to ROS
-        if msg.msg_type == sbp.observation.SBP_MSG_OBS:
+        if debug and msg.msg_type == sbp.observation.SBP_MSG_OBS:
             arb_txt_file.write(str(msg) + "\n")
             rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
         #msg.sender = 0 # overwrite sender ID
@@ -188,7 +190,7 @@ def ntrip_corrections(q_ntrip):
             ntrip_sender = sbp_msg.sender # get ntrip sender id
 
         q_ntrip.put(sbp_msg)
-        if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
+        if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
             ntrip_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
 
@@ -208,7 +210,7 @@ def radio_corrections(q_radio):
                         radio_sender = sbp_msg.sender
 
                     q_radio.put(sbp_msg)
-                    if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
+                    if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
                         radio_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
             except KeyboardInterrupt:
@@ -220,11 +222,13 @@ if __name__ == '__main__':
     q_ntrip = queue.Queue()
     q_radio = queue.Queue()
 
-    th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
-    th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
+    rospy.loginfo("debug: " + str(debug))
+    
+    #th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
+    #th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
 
-    th1.start()
-    th2.start()
+    #th1.start()
+    #th2.start()
 
     ntrip_msgs = []
     radio_msgs = []
