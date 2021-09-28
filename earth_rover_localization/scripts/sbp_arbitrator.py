@@ -43,6 +43,17 @@ UDP_PORT =  rospy.get_param('/sbp_arbitrator/udp_port', 55558)
 # create instance of UdpLogger object
 udp = UdpLogger(UDP_ADDRESS, UDP_PORT)
 
+# txt files for msg logging
+HOME = os.getenv('HOME')
+now = datetime.datetime.utcnow()
+txt_time = now.strftime("%Y%m%d%H%M%S")
+ntrip_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_ntrip.txt"
+radio_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_radio.txt"
+arb_file_path = HOME + "/sbp_arb_logs/" + txt_time + "_arbitrator.txt"
+ntrip_txt_file = open(ntrip_file_path, "a")
+radio_txt_file = open(radio_file_path, "a")
+arb_txt_file = open(arb_file_path, "a")
+
 # get current year:month:day:hour
 def get_current_time():
    now = datetime.datetime.utcnow()
@@ -128,25 +139,24 @@ def send_messages_via_udp(msgs):
     for msg in msgs:
         sender = get_sender(msg) # get sender
         # Change radio sender id to ntrip
-        if sender == "Radio":
+        if sender == "Radio" and ntrip_sender is not None:
             msg.sender = ntrip_sender
         #log obs messages to ROS
         if msg.msg_type == sbp.observation.SBP_MSG_OBS:
+            arb_txt_file.write(str(msg) + "\n")
             rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
         #msg.sender = 0 # overwrite sender ID
         udp.call(msg) # udp logger packs the msgs to binary before sending
 
 def get_sender(msg):
-    if ntrip_sender is None or radio_sender is None:
-        sender = "TBD"
+    #print("Ntrip sender: " + str(ntrip_sender) + ", msg sender: " +str(msg.sender))
+    if msg.sender == ntrip_sender:
+        sender = "Ntrip"
+    elif msg.sender == radio_sender:
+        sender = "Radio"
     else:
-        if msg.sender == ntrip_sender:
-            sender = "Ntrip"
-        elif msg.sender == radio_sender:
-            sender = "Radio"
-        else:
-            sender = str(msg.sender)
-            rospy.logwarn("Wrong sender definition: " + sender)
+        sender = str(msg.sender)
+        rospy.logwarn("Wrong sender definition: " + sender)
     return sender
 
 def ntrip_corrections(q_ntrip):
@@ -174,10 +184,12 @@ def ntrip_corrections(q_ntrip):
         # parse sbp msgs
         sbp_msg = sbp.msg.SBP.from_json_dict(json_msg)
 
-        if sbp_msg.msg_type == (sbp.observation.SBP_MSG_OBS) and ntrip_sender is None:
+        if ntrip_sender is None:
             ntrip_sender = sbp_msg.sender # get ntrip sender id
 
         q_ntrip.put(sbp_msg)
+        if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
+            ntrip_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
 
 def radio_corrections(q_radio):
@@ -192,9 +204,12 @@ def radio_corrections(q_radio):
                             radio_sender = sbp_msg.sender
                         except ValueError:
                             continue
-                    if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS and radio_sender is None:
+                    if radio_sender is None:
                         radio_sender = sbp_msg.sender
+
                     q_radio.put(sbp_msg)
+                    if sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
+                        radio_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
             except KeyboardInterrupt:
                 pass
