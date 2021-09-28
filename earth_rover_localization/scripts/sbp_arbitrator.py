@@ -222,13 +222,11 @@ if __name__ == '__main__':
     q_ntrip = queue.Queue()
     q_radio = queue.Queue()
 
-    rospy.loginfo("debug: " + str(debug))
-    
-    #th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
-    #th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
+    th1 = threading.Thread(target=ntrip_corrections,args=(q_ntrip,))
+    th2 = threading.Thread(target=radio_corrections,args=(q_radio,))
 
-    #th1.start()
-    #th2.start()
+    th1.start()
+    th2.start()
 
     ntrip_msgs = []
     radio_msgs = []
