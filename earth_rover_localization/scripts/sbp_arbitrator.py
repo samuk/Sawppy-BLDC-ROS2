@@ -144,9 +144,10 @@ def send_messages_via_udp(msgs):
         if sender == "Radio" and ntrip_sender is not None:
             msg.sender = ntrip_sender
         #log obs messages to ROS
-        if debug and msg.msg_type == sbp.observation.SBP_MSG_OBS:
-            arb_txt_file.write(str(msg) + "\n")
+        if msg.msg_type == sbp.observation.SBP_MSG_OBS:
             rospy.loginfo(sender + ", " + str(msg.header.t.tow) + ", " + str(msg.header.n_obs))
+            if debug:
+                arb_txt_file.write(str(msg) + "\n")
         #msg.sender = 0 # overwrite sender ID
         udp.call(msg) # udp logger packs the msgs to binary before sending
 
@@ -190,6 +191,7 @@ def ntrip_corrections(q_ntrip):
             ntrip_sender = sbp_msg.sender # get ntrip sender id
 
         q_ntrip.put(sbp_msg)
+
         if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
             ntrip_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
@@ -202,14 +204,10 @@ def radio_corrections(q_radio):
             try:
                 for sbp_msg, metadata in source.filter():
                     if radio_sender is None:
-                        try:
-                            radio_sender = sbp_msg.sender
-                        except ValueError:
-                            continue
-                    if radio_sender is None:
                         radio_sender = sbp_msg.sender
 
                     q_radio.put(sbp_msg)
+
                     if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
                         radio_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
