@@ -11,6 +11,8 @@
       <!-- Udp params -->
       <param name="udp_address" value="192.168.8.222" />
       <param name="udp_port" value="55558" />
+      <!-- Main loop frequency [Hz] -->
+      <param name="frequency" value="5" />
       <!-- Enable debugging options -->
       <param name="debug" value="True" />
     </node>
