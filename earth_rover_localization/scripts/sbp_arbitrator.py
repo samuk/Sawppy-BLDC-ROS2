@@ -213,13 +213,15 @@ def radio_corrections(q_radio):
 
                     if radio_sender is None:
                         radio_sender = sbp_msg.sender
+
                     q_radio.put(sbp_msg)
 
                     if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
                         radio_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
                     end_time = rospy.get_time()
-                    rospy.sleep(1/radio_rate - (end_time - start_time))
+                    sleep_time = max([0, 1/radio_rate - (end_time - start_time)])
+                    rospy.sleep(sleep_time)
 
             except KeyboardInterrupt:
                 pass
