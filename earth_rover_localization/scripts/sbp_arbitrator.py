@@ -39,6 +39,8 @@ RADIO_BAUDRATE = rospy.get_param('/sbp_arbitrator/radio_baudrate', 115200)
 # UDP LOGGER
 UDP_ADDRESS = rospy.get_param('/sbp_arbitrator/udp_address', "192.168.8.222")
 UDP_PORT =  rospy.get_param('/sbp_arbitrator/udp_port', 55558)
+
+freq = rospy.get_param('/sbp_arbitrator/frequency', 5)
 debug = rospy.get_param('/sbp_arbitrator/debug', False)
 
 # create instance of UdpLogger object
@@ -165,6 +167,7 @@ def get_sender(msg):
 def ntrip_corrections(q_ntrip):
     # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
     global ntrip_sender
+    ntrip_rate = rospy.Rate(50) # 10hz
     str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
     rtcm3tosbp_cmd = ["rtcm3tosbp", "-d", get_current_time()]
     cmd = "{} 2>/dev/null| {} | sbp2json".format(' '.join(str2str_cmd), ' '.join(rtcm3tosbp_cmd))
@@ -195,21 +198,28 @@ def ntrip_corrections(q_ntrip):
         if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
             ntrip_txt_file.write(str(dispatch(sbp_msg)) + "\n")
 
+        ntrip_rate.sleep()
 
 def radio_corrections(q_radio):
     global radio_sender # get radio sender id
+    radio_rate = 5 #hz
     with PySerialDriver(RADIO_PORT, baud=RADIO_BAUDRATE) as driver:
         print(driver.read)
         with Handler(Framer(driver.read, None, verbose=False)) as source:
             try:
                 for sbp_msg, metadata in source.filter():
+
+                    start_time = rospy.get_time()
+
                     if radio_sender is None:
                         radio_sender = sbp_msg.sender
-
                     q_radio.put(sbp_msg)
 
                     if debug and sbp_msg.msg_type == sbp.observation.SBP_MSG_OBS:
                         radio_txt_file.write(str(dispatch(sbp_msg)) + "\n")
+
+                    end_time = rospy.get_time()
+                    rospy.sleep(1/radio_rate - (end_time - start_time))
 
             except KeyboardInterrupt:
                 pass
@@ -229,6 +239,8 @@ if __name__ == '__main__':
     ntrip_msgs = []
     radio_msgs = []
 
+    main_rate = rospy.Rate(freq) # 10hz
+
     # Arbitrate
     while not rospy.is_shutdown():
         while len(ntrip_msgs)==0 and len(radio_msgs)==0:
@@ -239,3 +251,4 @@ if __name__ == '__main__':
                 multiplex(msg)
         ntrip_msgs = []
         radio_msgs = []
+        main_rate.sleep()
