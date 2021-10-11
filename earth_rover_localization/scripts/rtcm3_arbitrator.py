@@ -16,6 +16,7 @@ import argparse
 # NOTE: the dependency on MAVProxy can be avoided by making a local copy of
 # https://github.com/ArduPilot/MAVProxy/blob/master/MAVProxy/modules/lib/rtcm3.py
 import rtcm3
+import ntrip
 from multiprocessing import Process, Value
 from multiprocessing.managers import BaseManager
 
@@ -150,6 +151,44 @@ if debug:
 
 # Return True if 'tow_ms_new' is after 'tow_ms_prev', accounting for potential
 # end of week wrapping
+
+# provisional
+def get_toww(msg, msg_id):
+
+    if msg is None or len(msg) < 10:
+        return None
+
+    tow_ms, = struct.unpack('>L', msg[6:10])
+    print("Tow 32 bits: " + str(tow_ms))
+    tow_ms >>= 2
+    print("Tow 30 bits: " + str(tow_ms))
+
+    if msg_id in RTCM3_OBS_GPS: # DF004
+        return tow_ms
+    elif msg_id in RTCM3_OBS_GLO: # DF416/DF034
+        day_of_week = tow_ms >> 27
+        tod_ms = tow_ms & 0x7ffffff
+        # FIXME: don't automatically hard code number of leap seconds,
+        # determine automatically from ephemerides instead
+        tow_ms = 1 * MS_PER_DAY + tod_ms - UTC_SU_OFFSET * 3600 * 1000 + NUM_LEAP_SECONDS * 1000
+        while tow_ms < 0:
+            tow_ms += MS_PER_WEEK
+        return tow_ms
+    elif msg_id in RTCM3_OBS_GAL: # DF248
+        return tow_ms
+    elif msg_id in RTCM3_OBS_BDS: # DF+002
+        # handle underflow
+        if tow_ms >= (2 ** 30) - BDS_SECOND_TO_GPS_SECOND * 1000:
+            tow_ms = RTCM_MAX_TOW_MS + 1 - (2 ** 30) - tow_ms
+        # BDS system time has a constant offset
+        tow_ms += BDS_SECOND_TO_GPS_SECOND * 1000
+        if tow_ms >= MS_PER_WEEK:
+            tow_ms -= MS_PER_WEEK
+        return tow_ms
+    elif msg_id in RTCM3_OBS_QZS: # DF428
+        return tow_ms
+
+
 def is_tow_greater_than(tow_ms_prev, tow_ms_new):
     if tow_ms_new < MS_PER_DAY and tow_ms_prev > 6 * MS_PER_DAY:
         return True
@@ -285,31 +324,25 @@ def get_sender(msg):
 
 
 def ntrip_corrections(q_ntrip):
-    # run command to listen to ntrip client, convert from rtcm3 to sbp and from sbp to json redirecting the stdout
-    global ntrip_sender
-    ntrip_rate = rospy.Rate(50) # 10hz
-    str2str_cmd = ["str2str", "-in", "ntrip://{}:{}/{}".format(NTRIP_HOST, NTRIP_PORT, NTRIP_MOUNT_POINT)]
-    cmd = ' '.join(str2str_cmd)
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # global ntrip_sender
+    ntrip_rate = rospy.Rate(10) # 10hz
+    ntrip_client = ntrip.NtripClient(port = NTRIP_PORT, caster = NTRIP_HOST, mountpoint = NTRIP_MOUNT_POINT)
 
-    c = 0
     while not rospy.is_shutdown():
-        line = p.stdout.readline().strip()
-        if line == "stream server start":
-            print("Starting ntrip client")
-        print("Printing line")
-        print(line)
+        data = ntrip_client.read()
+        rtcm_id = ntrip_client.get_ID()
+        if data is None:
+            #print("Data is None")
+            continue
+        print("Here " + str(rtcm_id) + ", got: ", len(data))
 
-        if c > 5:
-            #q_ntrip.put(line)
-            encoded_string = line.encode()
-            byte_array = bytearray(encoded_string)
-
-            for msg in parser_cellular.parse(byte_array):
-                multiplex(msg)
-        c = c + 1
+        if rtcm_id in RTCM3_OBS:
+            tow_ms = get_toww(data, rtcm_id)
+            print(tow_ms)
 
         ntrip_rate.sleep()
+        #except KeyboardInterrupt:
+                #pass
 
 
 def radio_corrections(q_radio):
@@ -351,11 +384,11 @@ if __name__ == '__main__':
     th1.start()
     #th2.start()
 
-    ntrip_data = []
+    #ntrip_data = []
 
-    parser_cellular = RTCM3_Parser()
+    #parser_cellular = RTCM3_Parser()
 
-    main_rate = rospy.Rate(freq) # 10hz
+    #main_rate = rospy.Rate(freq) # 10hz
 
     # Arbitrate
     # while not rospy.is_shutdown():

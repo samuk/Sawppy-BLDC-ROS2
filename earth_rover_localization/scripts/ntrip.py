@@ -122,6 +122,7 @@ class NtripClient(object):
         if self.socket is None:
             time.sleep(0.1)
             self.connect()
+            print("Connecting!")
             return None
 
         if not self.found_header:
@@ -190,7 +191,9 @@ class NtripClient(object):
                 return None
             if self.rtcm3.read(data):
                 self.last_id = self.rtcm3.get_packet_ID()
+                time.sleep(0.1)
                 return self.rtcm3.get_packet()
+
 
     def connect(self):
         '''connect to NTRIP server'''
@@ -213,9 +216,10 @@ class NtripClient(object):
     def readLoop(self):
         while True:
             data = self.read()
+            rtcm_id = self.get_ID()
             if data is None:
                 continue
-            print("got: ", len(data))
+            print(str(rtcm_id) + ", got: ", len(data))
 
 if __name__ == '__main__':
     usage = "NtripClient.py [options] [caster] [port] mountpoint"
@@ -273,4 +277,6 @@ if __name__ == '__main__':
     ntripArgs['V2'] = options.V2
 
     n = NtripClient(**ntripArgs)
+    a = ntripArgs
+    print(a)
     n.readLoop()
