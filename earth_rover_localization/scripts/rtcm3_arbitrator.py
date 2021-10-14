@@ -114,18 +114,18 @@ RTCM_MAX_TOW_MS = MS_PER_WEEK - 1
 NUM_LEAP_SECONDS = 18
 
 # NTRIP host
-NTRIP_HOST = rospy.get_param('/sbp_arbitrator/ntrip_host', "rtk2go.com")
-NTRIP_PORT = rospy.get_param('/sbp_arbitrator/ntrip_port', 2101)
-NTRIP_MOUNT_POINT = rospy.get_param('/sbp_arbitrator/ntrip_mount_point', "ER_Valldoreix_1")
+NTRIP_HOST = rospy.get_param('/rtcm3_arbitrator/ntrip_host', "rtk2go.com")
+NTRIP_PORT = rospy.get_param('/rtcm3_arbitrator/ntrip_port', 2101)
+NTRIP_MOUNT_POINT = rospy.get_param('/rtcm3_arbitrator/ntrip_mount_point', "ER_Valldoreix_1")
 #RADIO
-RADIO_PORT =  rospy.get_param('/sbp_arbitrator/radio_port', "/dev/freewaveGXMT14")
-RADIO_BAUDRATE = rospy.get_param('/sbp_arbitrator/radio_baudrate', 115200)
+RADIO_PORT =  rospy.get_param('/rtcm3_arbitrator/radio_port', "/dev/freewaveGXMT14")
+RADIO_BAUDRATE = rospy.get_param('/rtcm3_arbitrator/radio_baudrate', 115200)
 # UDP LOGGER
-UDP_ADDRESS = rospy.get_param('/sbp_arbitrator/udp_address', "192.168.8.222")
-UDP_PORT =  rospy.get_param('/sbp_arbitrator/udp_port', 55558)
+UDP_ADDRESS = rospy.get_param('/rtcm3_arbitrator/udp_address', "192.168.8.222")
+UDP_PORT =  rospy.get_param('/rtcm3_arbitrator/udp_port', 55558)
 
-freq = rospy.get_param('/sbp_arbitrator/frequency', 5)
-debug = rospy.get_param('/sbp_arbitrator/debug', False)
+freq = rospy.get_param('/rtcm3_arbitrator/frequency', 5)
+debug = rospy.get_param('/rtcm3_arbitrator/debug', False)
 
 # create instance of UdpLogger object
 #udp = UdpLogger(UDP_ADDRESS, UDP_PORT)
@@ -167,6 +167,7 @@ def get_toww(msg, msg_id):
         return tow_ms
     elif msg_id in RTCM3_OBS_GLO: # DF416/DF034
         day_of_week = tow_ms >> 27
+        print("Day of week GLO: " + str(day_of_week))
         tod_ms = tow_ms & 0x7ffffff
         # FIXME: don't automatically hard code number of leap seconds,
         # determine automatically from ephemerides instead
@@ -322,6 +323,10 @@ def get_sender(msg):
         rospy.logwarn("Wrong sender definition: " + sender)
     return sender
 
+def get_sender_id(msg):
+    sender_id, = struct.unpack('>H', data[4:6])
+    sender_id &= 0xfff
+    return sender_id
 
 def ntrip_corrections(q_ntrip):
     # global ntrip_sender
@@ -334,7 +339,8 @@ def ntrip_corrections(q_ntrip):
         if data is None:
             #print("Data is None")
             continue
-        print("Here " + str(rtcm_id) + ", got: ", len(data))
+
+        print("Msg type: " + str(rtcm_id) + ", got: ", len(data))
 
         if rtcm_id in RTCM3_OBS:
             tow_ms = get_toww(data, rtcm_id)
