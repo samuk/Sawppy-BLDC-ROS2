@@ -7,19 +7,19 @@ $ sudo apt-get install ros-kinetic-ros-base
 ```
 
 ## Dependencies
-- A summary description and links to the corresponding sites are listed below only if browsing further information is needed. The installation steps will download or include necessary configuration details on how to use the required dependences
+A summary description and links to the corresponding sites are listed below only if browsing further information is needed. The installation steps will download or include necessary configuration details on how to use the required dependences
 
-[robot_localization](http://docs.ros.org/kinetic/api/robot_localization/html/index.html): Robot Localization is a collection of state estimation nodes, each of which is an implementation of a nonlinear state estimator for robots moving in 3D space. It contains two state estimation nodes, ekf_localization_node and ukf_localization_node. In addition, robot_localization provides navsat_transform_node, which aids in the integration of GPS data. A more detailed documentation explaining this package (nodes, workflow, ...) can be found [here](https://github.com/earthrover/earth_rover_localization/blob/master/earth_rover_localization/docs/robot_localization_documentation.md).
+- [robot_localization](http://docs.ros.org/kinetic/api/robot_localization/html/index.html): Robot Localization is a collection of state estimation nodes, each of which is an implementation of a nonlinear state estimator for robots moving in 3D space. It contains two state estimation nodes, ekf_localization_node and ukf_localization_node. In addition, robot_localization provides navsat_transform_node, which aids in the integration of GPS data. A more detailed documentation explaining this package (nodes, workflow, ...) can be found [here](https://github.com/earthrover/earth_rover_localization/blob/master/earth_rover_localization/docs/robot_localization_documentation.md).
 
-[Piksy Driver](https://github.com/earthrover/earth_rover_piksi): Driver compatible with the Swift Navigation devices.
+- [Piksy Driver](https://github.com/earthrover/earth_rover_piksi): Driver compatible with the Swift Navigation devices.
 
-[xsense Driver](https://github.com/xsens/xsens_mti_ros_node): Driver for the third and fourth generation of Xsens IMU devices
+- [xsense Driver](https://github.com/xsens/xsens_mti_ros_node): Driver for the third and fourth generation of Xsens IMU devices
 
-[GeographicLib](https://geographiclib.sourceforge.io/html/intro.html): Offers C++ interfaces to a set of geographic transformations.
+- [GeographicLib](https://geographiclib.sourceforge.io/html/intro.html): Offers C++ interfaces to a set of geographic transformations.
 
-- Dependency on host computer to monitor results.
+Dependency on host computer to monitor results.
 
-[Mapviz](https://github.com/swri-robotics/mapviz): Visualization tool with a plug-in system similar to RVIZ focused on visualizing 2D data.
+- [Mapviz](https://github.com/swri-robotics/mapviz): Visualization tool with a plug-in system similar to RVIZ focused on visualizing 2D data.
 
 ## Installation and Configuration
 
@@ -311,7 +311,23 @@ $ roslaunch mapviz mapviz.launch
 The documentation provided above gives general knowledge on how to install, configure and use the package in a general way. In this section, an in depth explanation of the package is provided. A knowledge of the [robot localization package](http://docs.ros.org/melodic/api/robot_localization/html/) is required.
 
 ### TF tree
-In order to understand a little better the robot model and it's references in the next sections, here's the [TF tree structure](docs/ros_tf_tree.pdf).
+In order to understand a little better the robot model and it's references in the next sections, see the full Tf tree structure in the documentation for the [ugv description](https://github.com/earthrover/earth_rover_ugv/tree/master/earth_rover_ugv_description#tf-tree) package.
+
+The localization package provides the transforms between **map**, **odom**, **utm** and **rover_base_link** frames.
+
+The robot localization package needs to be configured in a very specific way to build properly the TF tree:
+
+1. **LOCAL EKF**: Run one instance of a `robot_localization` state estimation node that fuses only continuous data, such as odometry and IMU data. Set `world_frame = odom_frame` and execute local path plans and motions in this frame.
+
+    Publishes `odom→rover_base_link` transform if `publish_tf = true`.
+
+2. **GLOBAL EKF**: Run another instance of a `robot_localization` state estimation node that fuses all sources of data, including the GPS. Set  `world_frame = map_frame` . Use the `navsat_transform_node` to transform the GPS data into an odometry message.
+
+	Publishes `map→odom` transform if `publish_tf = true`.
+
+The **navsat transform** node will provide the transform between odom and utm frames if `datum` parameter is provided.
+
+![](https://github.com/earthrover/earth_rover_localization/tree/master/earth_rover_localization/docs/frames_localization_20211018)
 
 ### Topics and nodes
 First things first, the [*under the hood* structure of the nodes](docs/ros_nodes_graph.pdf):
