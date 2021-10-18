@@ -327,7 +327,7 @@ The robot localization package needs to be configured in a very specific way to 
 
 The **navsat transform** node will provide the transform between odom and utm frames if `datum` parameter is provided.
 
-![](https://github.com/earthrover/earth_rover_localization/tree/master/earth_rover_localization/docs/frames_localization_20211018.png)
+![](https://github.com/earthrover/earth_rover_localization/blob/master/earth_rover_localization/docs/imgs/frames_localization_20211018.png)
 
 ### Topics and nodes
 First things first, the [*under the hood* structure of the nodes](docs/ros_nodes_graph.pdf):
