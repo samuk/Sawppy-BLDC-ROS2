@@ -1,0 +1,41 @@
+<launch>
+  <arg name="cam_suffix"    default="_0" />
+
+  <node  name="xsens_mti_node_3" pkg="xsens_mti_driver" type="xsens_mti_node" output="screen">
+      <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens_mti_node_3.yaml" />
+      <remap from="/filter/free_acceleration" to="mti3/filter/free_acceleration" />
+      <remap from="/filter/quaternion" to="mti3/filter/quaternion" />
+      <remap from="/filter/velocity" to="mti3/filter/velocity" />
+      <remap from="/imu/acceleration" to="mti3/imu/acceleration" />
+      <remap from="/imu/angular_velocity" to="mti3/imu/angular_velocity" />
+      <remap from="/imu/data" to="mti3/imu/data" />
+      <remap from="/imu/mag" to="mti3/imu/mag" />
+      <remap from="/imu/time_ref" to="mti3/imu/time_ref" />
+  </node>
+
+  <node  name="xsens_mti_node_630" pkg="xsens_mti_driver" type="xsens_mti_node" output="screen">
+      <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens_mti_node_630.yaml" />
+      <remap from="/filter/free_acceleration" to="mti630/filter/free_acceleration" />
+      <remap from="/filter/quaternion" to="mti630/filter/quaternion" />
+      <remap from="/filter/velocity" to="mti630/filter/velocity" />
+      <remap from="/imu/acceleration" to="mti630/imu/acceleration" />
+      <remap from="/imu/angular_velocity" to="mti630/imu/angular_velocity" />
+      <remap from="/imu/data" to="mti630/imu/data" />
+      <remap from="/imu/mag" to="mti630/imu/mag" />
+      <remap from="/imu/time_ref" to="mti630/imu/time_ref" />
+  </node>
+
+  <!--<node  name="imu_quat_to_deg_3" pkg="earth_rover_localization" type="imu_quat_to_deg" output="screen">
+    <remap from="imu_quat" to="mti3/filter/quaternion" />
+  </node>-->
+
+  <!-- Load the scouting box model -->
+  <!--<node pkg="tf" type="static_transform_publisher" name="tf_btw_imus" args="-0.00846 0.0035 0.02883 0 0 0 xsens_MTi630DK xsens 10" output="screen"/>
+
+  <node pkg="imu_transformer" type="imu_transformer_node" name="imu_data_transformer" output="screen">
+    <remap from="imu_in" to="mti630/imu/data"/>
+    <remap from="imu_out" to="mti630/imu/data_transformed"/>
+    <param name="target_frame" value="xsens"/>
+  </node>-->
+
+</launch>
