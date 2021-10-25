@@ -78,7 +78,7 @@
      _imu.linear_acceleration_covariance[0] = 0.0004;
      _imu.linear_acceleration_covariance[4] = _imu.linear_acceleration_covariance[0];
      _imu.linear_acceleration_covariance[8] = _imu.linear_acceleration_covariance[0];
-     
+
      _nh.getParam("mount_type", _mounting_type);
 
  }
@@ -102,9 +102,11 @@
      if(_mounting_type == "rover"){
         heading_deg.data = heading_deg.data - 180;    // 0° pointing East
      }
-     
+
      if (heading_deg.data > 360.0)
          heading_deg.data = heading_deg.data - 360.0;
+     if (heading_deg.data < 0)
+         heading_deg.data = heading_deg.data + 360.0;
      heading_radians.data = heading_deg.data * M_PI/180.0;
 
      // Save heading in degrees
