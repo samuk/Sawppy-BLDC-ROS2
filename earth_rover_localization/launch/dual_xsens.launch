@@ -25,17 +25,14 @@
       <remap from="/imu/time_ref" to="mti630/imu/time_ref" />
   </node>
 
-  <!--<node  name="imu_quat_to_deg_3" pkg="earth_rover_localization" type="imu_quat_to_deg" output="screen">
-    <remap from="imu_quat" to="mti3/filter/quaternion" />
-  </node>-->
+  <node pkg="earth_rover_localization"  name="imu_transform_3" type="imu_transform.py" output="screen">
+      <remap from="/imu_in" to="mti3/imu/data" />
+      <remap from="/imu_deg" to="mti3/imu_deg" />
+  </node>
 
-  <!-- Load the scouting box model -->
-  <!--<node pkg="tf" type="static_transform_publisher" name="tf_btw_imus" args="-0.00846 0.0035 0.02883 0 0 0 xsens_MTi630DK xsens 10" output="screen"/>
-
-  <node pkg="imu_transformer" type="imu_transformer_node" name="imu_data_transformer" output="screen">
-    <remap from="imu_in" to="mti630/imu/data"/>
-    <remap from="imu_out" to="mti630/imu/data_transformed"/>
-    <param name="target_frame" value="xsens"/>
-  </node>-->
+  <node pkg="earth_rover_localization"  name="imu_transform_630" type="imu_transform.py" output="screen">
+      <remap from="/imu_in" to="mti630/imu/data" />
+      <remap from="/imu_deg" to="mti630/imu_deg" />
+  </node>
 
 </launch>
