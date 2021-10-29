@@ -13,7 +13,7 @@ A summary description and links to the corresponding sites are listed below only
 
 - [Piksy Driver](https://github.com/earthrover/earth_rover_piksi): Driver compatible with the Swift Navigation devices.
 
-- [xsense Driver](https://github.com/xsens/xsens_mti_ros_node): Driver for the third and fourth generation of Xsens IMU devices
+- [Xsense Driver](https://github.com/earthrover/earth_rover_xsens): Driver for Xsens IMU devices.
 
 - [GeographicLib](https://geographiclib.sourceforge.io/html/intro.html): Offers C++ interfaces to a set of geographic transformations.
 
@@ -30,6 +30,7 @@ Dependency on host computer to monitor results.
 	$ cd ~/earth_rover_ws/src 	
 	$ git clone --recursive https://github.com/earthrover/earth_rover_localization.git
 	```
+
 ### GeographicLib
 
 2. Download GeographicLib
@@ -68,7 +69,7 @@ Dependency on host computer to monitor results.
 	sudo make install
 	```
 
-Further installing details can be found [here](https://geographiclib.sourceforge.io/html/install.html)
+	Further installing details can be found [here](https://geographiclib.sourceforge.io/html/install.html).
 
 ### Robot_localization and Piksy RTK packages
 
@@ -77,49 +78,49 @@ Further installing details can be found [here](https://geographiclib.sourceforge
 	```
 	sudo apt-get install ros-$ROS_DISTRO-robot-localization
 	```
-7. Download ROS drivers for the Piksi RTK GPS module
+	**NOTE**: We currently use version **2.6.9**. If the installation with apt installs a newer version, follow the next steps:
 
+	- Delete the source installation:
+		```
+		sudo apt-get remove ros-melodic-robot-localization
+		```
+	- Clone the repo:
+		```
+		cd ~/earth_rover_ws/src/libs
+		git clone https://github.com/cra-ros-pkg/robot_localization.git
+		```
+	- Checkout the corresponding tag version:
+	```
+	cd ~/earth_rover_ws/src/libs/robot_localization
+	git checkout tags/2.6.9
+	```
+
+7. Download ROS drivers for the Piksi RTK GPS module
 	```
 	mkdir -p ~/earth_rover_ws/src/libs
 	cd ~/earth_rover_ws/src/libs
 	git clone https://github.com/earthrover/earth_rover_piksi
 	```
-7.1 Checkout the new feature which is'n in the release yet (*To test*)
-
-```
-cd ~/earth_rover_ws/src/libs/earth_rover_piksi
-git checkout feature_2.14.1		
-```
+8. Checkout the new feature which isn't in the release yet (*To test*)
+	```
+	cd ~/earth_rover_ws/src/libs/earth_rover_piksi
+	git checkout feature_2.14.1		
+	```
 
 ### Xsense
-8. Install the MTi USB Serial Driver
-
+9. Download the ROS driver for Xsens MTi devices
 	```
 	$ cd ~/earth_rover_ws/src/libs/
-	$ git clone https://github.com/xsens/xsens_mt.git
-	$ cd xsens_mt
-	$ make
-	$ sudo modprobe usbserial
-	$ sudo insmod ./xsens_mt.ko
+	$ git clone https://github.com/earthrover/earth_rover_xsens.git
 	```
 
-9. Install gps_common or gps_umd as available based on the ROS distributable
+10. Build xspublic from your catkin workspace:
+	```
+	$ pushd src/xsens_ros_mti_driver/lib/xspublic && make && popd
+	```
 
-	```
-	$ sudo apt-get install ros-kinetic-gps-umd
-	```
-	or
-	```
-	$ sudo apt-get install ros-kinetic-gps-common
-	```
-10. Download xsense ROS driver
-
-	```
-	$ cd ~/earth_rover_ws/src/libs/
-	$ git clone https://github.com/xsens/xsens_mti_ros_node
-	```
 ### Compile
-10. Compile the packages
+11. Compile the packages
 
 	```
 	$ cd ~/earth_rover_ws 	
@@ -236,7 +237,7 @@ altitude0: 133.0527
 ### Inputs
 
 The main published topics are:
-- `/mti/sensor/imu`: A [sensor_msgs/Imu.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Imu.html) with the imu data
+- `/imu/data`: A [sensor_msgs/Imu.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Imu.html) with the imu data
 - `/heading`: A [sensor_msgs/Imu.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Imu.html) which reports the vehicle heading reported by the baseline between reference and attitude receiver
 - `/piksi_receiver/navsatfix_best_fix`: A [sensor_msgs/NavSatFix.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/NavSatFix.html) that contains WGS 84 coordinates with best available fix at the moment (either RTK or SBAS)
 
@@ -342,7 +343,7 @@ As you can see, the **raw data input** is composed by the topics (the sensors ar
 
 - `/piksi_attitude/baseline_heading`: a [piksi_rtk_msgs/BaselineHeading.msg](https://github.com/earthrover/earth_rover_piksi/blob/master/piksi_rtk_msgs/msg/BaselineHeading.msg) that contains heading direction with *best available solution* at the moment. The data is in `NED` frame and in `mili-degrees (mdeg)`.
 
-- `/mti/sensor/imu`: a [sensor_msgs/Imu.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Imu.html) with the IMU raw data. The orientation is given in `rad`, the angular velocity in `rad/s` and the linear acceleration in `m/s^2`. Today (15/04/2020), the IMU package is wrong since it does not provide covariance values, hence they are hard-coded in a later step (explained in next sections).
+- `/imu/data`: a [sensor_msgs/Imu.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Imu.html) with the IMU raw data. The orientation is given in `rad`, the angular velocity in `rad/s` and the linear acceleration in `m/s^2`. Today (15/04/2020), the IMU package is wrong since it does not provide covariance values, hence they are hard-coded in a later step (explained in next sections).
 
 - `/tf`: a [tf/tfMessage.msg](http://docs.ros.org/melodic/api/tf/html/msg/tfMessage.html) message containing all the required transformations for the localization, namely:
 
@@ -367,10 +368,10 @@ The extra topics result of processing the data along the way are the following:
 
 #### Nodes
 The localization package is composed of 4 nodes (+1 which is not currently used):
-- `/heading_listener`: this node takes in the topics `/piksi_attitude/baseline_heading` and `/mti/sensor/imu` and process their data for the following nodes. It does the following processing:
+- `/heading_listener`: this node takes in the topics `/piksi_attitude/baseline_heading` and `/imu/data` and process their data for the following nodes. It does the following processing:
 
 	1. Transforms the data in `/piksi_attitude/baseline_heading` from `NED` to `ENU` reference frame, and from `mdeg` to `rad`. Publishes it in the `/heading` topic.
-	2. Transforms the data in `/mti/sensor/imu`, adding the covariance of the IMU for it's readings and modifying the `yaw` value: `yaw_imu = heading(last_available) + (imu_current - imu_0(when last_available heading))`. Publishes it in the `/imu` topic. The second modification may not be used depending on the configuration of the ekf.
+	2. Transforms the data in `/imu/data`, adding the covariance of the IMU for it's readings and modifying the `yaw` value: `yaw_imu = heading(last_available) + (imu_current - imu_0(when last_available heading))`. Publishes it in the `/imu` topic. The second modification may not be used depending on the configuration of the ekf.
 
 - [`/navsat_transform`](http://docs.ros.org/melodic/api/robot_localization/html/navsat_transform_node.html): this node transform the gps data provided by `/piksi_receiver/navsatfix_best_fix` to odometry data in `/odometry/gps`. It also converts back the filtered odometry in `/odometry/filtered/global` to gps in `/gps/filtered`. The parameters used in this node are directly applied in the launch file: `/launch/er_localization_node.launch`.
 

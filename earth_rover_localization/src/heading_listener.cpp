@@ -66,7 +66,7 @@
      _pub_heading_enu_deg = _nh.advertise<std_msgs::Float32>("/heading_deg", 1);
 
 
-     _sub_imu_vru = _nh.subscribe("/mti/sensor/imu", 1000, &HeadingListenerNode::cb_imu_vru2enu, this);
+     _sub_imu_vru = _nh.subscribe("/imu/data", 1000, &HeadingListenerNode::cb_imu_vru2enu, this);
      _pub_imu_enu = _nh.advertise<sensor_msgs::Imu>("/imu", 1);
 
      _imu.orientation_covariance[0] = (1 * M_PI/180.0)*(1 * M_PI/180.0);

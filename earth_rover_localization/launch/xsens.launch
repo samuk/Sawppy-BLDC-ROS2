@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
 <launch>
-    <node name="xsens_mti" pkg="xsens_driver" type="mtnode.py" respawn="true">
-        <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens.yaml"/>
+    <node  name="xsens_mti_node" pkg="earth_rover_xsens" type="xsens_mti_node" respawn="true" output="screen">
+        <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens_mti.yaml" />
     </node>
 </launch>

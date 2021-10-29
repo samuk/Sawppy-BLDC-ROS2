@@ -1,7 +1,7 @@
 <launch>
   <arg name="cam_suffix"    default="_0" />
 
-  <node  name="xsens_mti_node_3" pkg="xsens_mti_driver" type="xsens_mti_node" output="screen">
+  <node  name="xsens_mti_node_3" pkg="earth_rover_xsens" type="xsens_mti_node" output="screen">
       <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens_mti_node_3.yaml" />
       <remap from="/filter/free_acceleration" to="mti3/filter/free_acceleration" />
       <remap from="/filter/quaternion" to="mti3/filter/quaternion" />
@@ -13,7 +13,7 @@
       <remap from="/imu/time_ref" to="mti3/imu/time_ref" />
   </node>
 
-  <node  name="xsens_mti_node_630" pkg="xsens_mti_driver" type="xsens_mti_node" output="screen">
+  <node  name="xsens_mti_node_630" pkg="earth_rover_xsens" type="xsens_mti_node" output="screen">
       <rosparam command="load" file="$(find earth_rover_localization)/cfg/xsens_mti_node_630.yaml" />
       <remap from="/filter/free_acceleration" to="mti630/filter/free_acceleration" />
       <remap from="/filter/quaternion" to="mti630/filter/quaternion" />

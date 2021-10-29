@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   piksi_multi_rtk
   piksi_rtk_msgs
   robot_localization
+  earth_rover_xsens
   tf
 )
 

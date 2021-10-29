@@ -19,7 +19,7 @@
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->  
+  <!-- Example: -->
   <url type="website">http://open.earthrover.cc/</url>
   <url type="website">http://wiki.ros.org/earth_rover_localization</url>
   <url type="repository">https://github.com/earthrover/earth_rover_localization.git</url>
@@ -32,8 +32,8 @@
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
 
-  <buildtool_depend>catkin</buildtool_depend>  
-    
+  <buildtool_depend>catkin</buildtool_depend>
+
   <!-- system dependencies -->
   <build_depend>geographiclib</build_depend>
   <build_export_depend>geographiclib</build_export_depend>
@@ -41,21 +41,24 @@
   <build_export_depend>geographiclib-tools</build_export_depend>
 
   <!-- packages -->
-  <build_depend>rospy</build_depend> 
+  <build_depend>rospy</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>robot_localization</build_depend>
   <build_depend>tf</build_depend>
   <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>   
-  <build_export_depend>robot_localization</build_export_depend> 
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>robot_localization</build_export_depend>
   <build_export_depend>tf</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>robot_localization</exec_depend>
-  <exec_depend>tf</exec_depend> 
+  <exec_depend>tf</exec_depend>
   <build_depend>piksi_multi_rtk</build_depend>
   <build_export_depend>piksi_multi_rtk</build_export_depend>
   <exec_depend>piksi_multi_rtk</exec_depend>
+  <build_depend>earth_rover_xsens</build_depend>
+  <build_export_depend>earth_rover_xsens</build_export_depend>
+  <exec_depend>earth_rover_xsens</exec_depend>
 
   <!-- message packages -->
   <build_depend>std_msgs</build_depend>
