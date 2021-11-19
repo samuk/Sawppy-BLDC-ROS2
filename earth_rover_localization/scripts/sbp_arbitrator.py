@@ -30,9 +30,9 @@ ntrip_sender = None
 radio_sender = None
 
 # NTRIP host
-NTRIP_HOST = rospy.get_param('/sbp_arbitrator/ntrip_host', "rtk2go.com")
-NTRIP_PORT = rospy.get_param('/sbp_arbitrator/ntrip_port', 2101)
-NTRIP_MOUNT_POINT = rospy.get_param('/sbp_arbitrator/ntrip_mount_point', "ER_Valldoreix_1")
+NTRIP_HOST = rospy.get_param('/ntrip_host', "rtk2go.com")
+NTRIP_PORT = rospy.get_param('/ntrip_port', 2101)
+NTRIP_MOUNT_POINT = rospy.get_param('/ntrip_mount_point', "ER_Valldoreix_1")
 #RADIO
 RADIO_PORT =  rospy.get_param('/sbp_arbitrator/radio_port', "/dev/freewaveGXMT14")
 RADIO_BAUDRATE = rospy.get_param('/sbp_arbitrator/radio_baudrate', 115200)
