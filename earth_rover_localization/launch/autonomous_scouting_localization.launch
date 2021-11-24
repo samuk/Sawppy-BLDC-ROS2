@@ -7,8 +7,6 @@
 -->
 
 <launch>
-  <!-- SBP arbitrator -->
-  <include if="$(eval enable_sensors)" file="$(find earth_rover_localization)/launch/sbp_arbitrator.launch"/>
 
   <!-- Heading Listener node-->
   <node pkg="earth_rover_localization" type="heading_listener" name="heading_listener" output="log" />
