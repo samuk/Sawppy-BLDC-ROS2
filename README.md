@@ -12,18 +12,17 @@ Looks like original Earth Rover is running on Xavier, Ubuntu 20.04 & Foxy? Dashi
 
 Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow](https://github.com/samuk/ANI717_Robotics)?
 
-# BOM (mostly) open hardware 4x4 drive 4x4 steer
+# BOM (mostly) open hardware 4x4 drive 
 
 -  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano, upgrade if needed. 
-- [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)[ROS2](https://github.com/ros-agriculture/ublox_f9p/issues/12) [ublox exists](https://index.ros.org/p/ublox_gps/github-KumarRobotics-ublox/)
+- [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
 - [Wheels](https://www.aliexpress.com/item/32839959696.html) 
-- [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering
 - Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
 - Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
-- Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
+- Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS1](https://github.com/deltaxrobot/Delta-X-Software)
 
  ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
 
@@ -31,6 +30,8 @@ Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation
 
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
+- [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering, if starting from Jetbot may need skid to start with.
+
 
 
 Overview
