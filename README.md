@@ -7,11 +7,13 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
-- [Sparkfun RTK](https://www.ardusimple.com/product/sparkfun-gps-rtk2/)
+- [Septentrio or Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/)
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html)
 - Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
 - Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
+
+ ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
 
 Overview
 ------
