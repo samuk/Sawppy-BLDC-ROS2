@@ -11,6 +11,7 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2](https://github.com/aussierobots/ublox_dgnss) [ROS2 yet](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
+- [Wheels](https://www.aliexpress.com/item/32839959696.html) 
 - Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
 
  ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
