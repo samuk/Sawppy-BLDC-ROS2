@@ -2,9 +2,10 @@
 
 This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open Hardware Ag robot & investigations into a ROS2 port. 
 
-Looks like original Earth Rover is running on Xavier, so CM3 may lack grunt. Ubuntu 20.04 & Foxy? Dashing?
+Looks like original Earth Rover is running on Xavier, Ubuntu 20.04 & Foxy? Dashing?
 
 ROS2 
+
 [Teb-Local-Planner](https://github.com/rst-tu-dortmund/teb_local_planner/tree/foxy-devel)
 
 [Robot_localization](https://github.com/cra-ros-pkg/robot_localization/tree/ros2)
@@ -13,10 +14,9 @@ ROS2
 
 Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow]9https://github.com/samuk/ANI717_Robotics)?
 
-# BOM open hardware 4x4 drive 4x4 steer
+# BOM (mostly) open hardware 4x4 drive 4x4 steer
 
-- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) Or would a Jetson Nano work?
-- [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
+-  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano, upgrade if needed. 
 - [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)[ROS2](https://github.com/ros-agriculture/ublox_f9p/issues/12) [ublox exists](https://index.ros.org/p/ublox_gps/github-KumarRobotics-ublox/)
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
@@ -28,6 +28,12 @@ Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation
 - Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
 
  ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
+
+# Possible
+
+- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
+- [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
+
 
 Overview
 ------
