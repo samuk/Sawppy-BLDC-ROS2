@@ -6,6 +6,18 @@ This package contains ROS nodes, configuration and launch files to use the EKF o
 $ sudo apt-get install ros-kinetic-ros-base
 ```
 
+## ROS2 evaluation
+
+[Robot_localization](https://github.com/cra-ros-pkg/robot_localization/tree/ros2)
+
+[Pisky - not yet](https://github.com/ethz-asl/ethz_piksi_ros/issues/198)
+
+[Xsense driver](https://github.com/bluespace-ai/bluespace_ai_xsens_ros_mti_driver)
+
+- [GeographicLib](https://geographiclib.sourceforge.io/html/intro.html): should work?
+
+
+
 ## Dependencies
 A summary description and links to the corresponding sites are listed below only if browsing further information is needed. The installation steps will download or include necessary configuration details on how to use the required dependences
 
