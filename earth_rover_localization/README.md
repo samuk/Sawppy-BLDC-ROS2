@@ -10,9 +10,9 @@ $ sudo apt-get install ros-kinetic-ros-base
 
 [Robot_localization](https://github.com/cra-ros-pkg/robot_localization/tree/ros2)
 
-[Pisky - not yet](https://github.com/ethz-asl/ethz_piksi_ros/issues/198)
+Maybe don't care as using alternative RTK? [Pisky - not yet](https://github.com/ethz-asl/ethz_piksi_ros/issues/198)
 
-[Xsense driver](https://github.com/bluespace-ai/bluespace_ai_xsens_ros_mti_driver)
+Don't care? [Xsense driver](https://github.com/bluespace-ai/bluespace_ai_xsens_ros_mti_driver)
 
 - [GeographicLib](https://geographiclib.sourceforge.io/html/intro.html): should work?
 
