@@ -1,20 +1,17 @@
 # earth_rover_localization [![Build Status](https://travis-ci.com/earthrover/OpenER.svg?branch=master)](https://travis-ci.com/earthrover/OpenER)
 
-This repository contains ROS drivers, tools, launch files, and documents to configure the EKF robot_localization for the Earth Rover Agribot.
+This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open Hardware Ag robot & investigations into a ROS2 port.
 
-![](https://github.com/earthrover/er_localisation/blob/master/earth_rover_localization/docs/imgs/OpenER.jpg)
 
 # BOM open hardware 4x4 drive 4x4 steer
 
-[Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
-[Acorn Motherboard](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
-[Sparkfun RTK](https://www.ardusimple.com/product/sparkfun-gps-rtk2/)
-[4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
-[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html)
-Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
-
-
-
+- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
+- [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
+- [Sparkfun RTK](https://www.ardusimple.com/product/sparkfun-gps-rtk2/)
+- [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
+- [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html)
+- Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
+- Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
 
 Overview
 ------
