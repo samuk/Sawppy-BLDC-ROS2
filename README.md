@@ -4,7 +4,8 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 
 Looks like original Earth Rover is running on Xavier, so CM3 may lack grunt. Ubuntu 20.04 & Foxy? Dashing?
 
-ROS2 [Teb-Local-Planner](https://github.com/rst-tu-dortmund/teb_local_planner/tree/foxy-devel)
+ROS2 
+[Teb-Local-Planner](https://github.com/rst-tu-dortmund/teb_local_planner/tree/foxy-devel)
 
 [Robot_localization](https://github.com/cra-ros-pkg/robot_localization/tree/ros2)
 
@@ -20,6 +21,8 @@ ROS2 [Teb-Local-Planner](https://github.com/rst-tu-dortmund/teb_local_planner/tr
 - Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
 - [Wheels](https://www.aliexpress.com/item/32839959696.html) 
 - [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering
+- Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
+- Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
 - Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom?
 
  ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
