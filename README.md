@@ -11,11 +11,11 @@ ROS2
 
 [ROS2 RTK](https://github.com/aussierobots/ublox_dgnss)
 
-Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) somehow?
+Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow]9https://github.com/samuk/ANI717_Robotics)?
 
 # BOM open hardware 4x4 drive 4x4 steer
 
-- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
+- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) Or would a Jetson Nano work?
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
 - [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)[ROS2](https://github.com/ros-agriculture/ublox_f9p/issues/12) [ublox exists](https://index.ros.org/p/ublox_gps/github-KumarRobotics-ublox/)
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
