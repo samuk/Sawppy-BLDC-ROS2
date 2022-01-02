@@ -11,6 +11,8 @@ ROS2
 
 [ROS2 RTK](https://github.com/aussierobots/ublox_dgnss)
 
+Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) somehow?
+
 # BOM open hardware 4x4 drive 4x4 steer
 
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
