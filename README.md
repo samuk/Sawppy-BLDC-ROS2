@@ -4,15 +4,13 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 
 Looks like original Earth Rover is running on Xavier, Ubuntu 20.04 & Foxy? Dashing?
 
-ROS2 
-
 [Teb-Local-Planner](https://github.com/rst-tu-dortmund/teb_local_planner/tree/foxy-devel)
 
 [Robot_localization](https://github.com/cra-ros-pkg/robot_localization/tree/ros2)
 
 [ROS2 RTK](https://github.com/aussierobots/ublox_dgnss)
 
-Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow]9https://github.com/samuk/ANI717_Robotics)?
+Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow](https://github.com/samuk/ANI717_Robotics)?
 
 # BOM (mostly) open hardware 4x4 drive 4x4 steer
 
