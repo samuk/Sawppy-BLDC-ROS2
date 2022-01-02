@@ -7,7 +7,7 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
-- [ ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) No [ROS2](https://github.com/ros-agriculture/ublox_f9p/issues/12) [ublox exists](https://index.ros.org/p/ublox_gps/github-KumarRobotics-ublox/)
+- [ ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)[ROS2](https://github.com/ros-agriculture/ublox_f9p/issues/12) [ublox exists](https://index.ros.org/p/ublox_gps/github-KumarRobotics-ublox/)
 - [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2](https://github.com/aussierobots/ublox_dgnss) [ROS2 yet](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
