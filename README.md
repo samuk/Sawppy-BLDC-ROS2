@@ -4,6 +4,18 @@ This repository contains ROS drivers, tools, launch files, and documents to conf
 
 ![](https://github.com/earthrover/er_localisation/blob/master/earth_rover_localization/docs/imgs/OpenER.jpg)
 
+# BOM open hardware 4x4 drive 4x4 steer
+
+[Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module)
+[Acorn Motherboard](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md)
+[Sparkfun RTK](https://www.ardusimple.com/product/sparkfun-gps-rtk2/)
+[4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
+[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html)
+Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
+
+
+
+
 Overview
 ------
 - [earth_rover_localization](https://github.com/earthrover/earth_rover_localization/tree/master/earth_rover_localization): ROS package to configure the EKF of the robot_localization package. Uses sensor fusion of GPS [Piksy Multi](https://www.swiftnav.com/piksi-multi) and IMU [MTi-3 AHRS](https://www.xsens.com/products/mti-1-series/)
