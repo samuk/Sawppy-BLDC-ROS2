@@ -27,7 +27,7 @@ Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation
  ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
 
 # Possible
-
+- [Swappy ROS2 Mars Rover](https://github.com/mgonzs13/ros2_rover)
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
 - [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering, if starting from Jetbot may need skid to start with.
