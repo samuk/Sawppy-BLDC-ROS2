@@ -3,7 +3,8 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 
 # BOM (mostly) open hardware
 
--  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano, upgrade if needed. 
+-  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano compute module, upgrade if needed. 
+- [Tenacity rover body](https://github.com/jetdillo/tenacity_rover#readme)
 - [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
 - [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
@@ -19,6 +20,7 @@ This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open 
 - [Dashing on Nano](https://github.com/ANI717/Headless-Jetson-Nano-Setup)
 - [Swappy ROS2 Rover for Ackerman drive/ Teleop](https://github.com/mgonzs13/ros2_rover)
 - [Tensorflow model to follow crop rows](https://github.com/ANI717/ANI717_Robotics#design-diagram)
+- [Crop row following - ROS1](https://github.com/PRBonn/visual-crop-row-navigation#readme)
 
 
 # Notes
