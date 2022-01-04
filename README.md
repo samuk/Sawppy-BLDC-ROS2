@@ -9,22 +9,33 @@ Thoughts on ROS2 Open Hardware Ag robot
 - ~£90 [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
 - ~100[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - ~£240 [6x 4108 BLDC motor TBD](https://s.click.aliexpress.com/e/_AE2SCu)
+- ~70 [4 x 35kg servo](https://www.hiwonder.hk/products/hiwonder-hts-35h-high-voltage-bus-servo-35kg-torque-with-data-feedback)
 - ~£100 Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
 - ~£200 Hang a [Nindmani Delta](https://github.com/AutoRoboCulture/nindamani-the-weed-removal-robot)
 - ~£40Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
 
 = ~£1640
 
-# Navigation
-
- ![Visual & ML](https://pbs.twimg.com/media/FIRSEUpXoA8Sf_V?format=jpg&name=900x900)
-- Visually follow crop rows using Tensorflow model to GPS waypoints, at GPS waypoint find next crop row. 
-
-# Software
+# OS
 - [Dashing on Nano](https://github.com/ANI717/Headless-Jetson-Nano-Setup)
 - [Swappy ROS2 Rover for Ackerman drive/ Teleop](https://github.com/mgonzs13/ros2_rover)
-- [Tensorflow model to follow crop rows](https://github.com/ANI717/ANI717_Robotics#design-diagram)
-- [Crop row following - ROS1](https://github.com/PRBonn/visual-crop-row-navigation#readme)
+
+# Navigation
+
+![Visual & ML](https://pbs.twimg.com/media/FIRSEUpXoA8Sf_V?format=jpg&name=900x900)
+
+Controller
+
+Waypoint - [Crop row following - ROS1](https://github.com/PRBonn/visual-crop-row-navigation#readme)
+
+Local Planner - [Crop row following - ROS1](https://github.com/PRBonn/visual-crop-row-navigation#readme)
+
+Turning action - [Crop row following - ROS1](https://github.com/PRBonn/visual-crop-row-navigation#readme)
+
+Visual servoing - [Tensorflow model to follow crop rows](https://github.com/ANI717/ANI717_Robotics#design-diagram)
+
+
+
 
 
 # Notes
