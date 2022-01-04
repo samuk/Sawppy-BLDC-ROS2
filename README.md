@@ -1,19 +1,23 @@
 
-This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open Hardware Ag robot & investigations into a ROS2 port. 
+Thoughts on ROS2 Open Hardware Ag robot 
 
 # BOM (mostly) open hardware
 
--  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano compute module, upgrade if needed. 
-- [Tenacity rover body](https://github.com/jetdillo/tenacity_rover#readme)
-- [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
-- [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
-- [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
-- [BLDC motor TBD]
-- Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
-- Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
-- Hang a [BLDC DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS2 in development](https://github.com/deltaxrobot/Delta-X-Software)
+- ~£400 Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano compute module, upgrade if needed. 
+- ~£300 [Tenacity rover body](https://github.com/jetdillo/tenacity_rover#readme)
+- ~£170[ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
+- ~£90 [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
+- ~100[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
+- ~£240 [6x 4108 BLDC motor TBD](https://s.click.aliexpress.com/e/_AE2SCu)
+- ~£100 Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
+- ~£200 Hang a [BLDC DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS2 in development](https://github.com/deltaxrobot/Delta-X-Software)
+- ~£40Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
+
+= ~£1640
 
 # Navigation
+
+ ![Visual & ML](https://pbs.twimg.com/media/FIRSEUpXoA8Sf_V?format=jpg&name=900x900)
 - Visually follow crop rows using Tensorflow model to GPS waypoints, at GPS waypoint find next crop row. 
 
 # Software
