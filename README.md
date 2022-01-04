@@ -10,7 +10,7 @@ Thoughts on ROS2 Open Hardware Ag robot
 - ~100[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - ~£240 [6x 4108 BLDC motor TBD](https://s.click.aliexpress.com/e/_AE2SCu)
 - ~£100 Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
-- ~£200 Hang a [BLDC DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS2 in development](https://github.com/deltaxrobot/Delta-X-Software)
+- ~£200 Hang a [Nindmani Delta](https://github.com/AutoRoboCulture/nindamani-the-weed-removal-robot)
 - ~£40Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
 
 = ~£1640
