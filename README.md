@@ -1,6 +1,37 @@
-# earth_rover_localization [![Build Status](https://travis-ci.com/earthrover/OpenER.svg?branch=master)](https://travis-ci.com/earthrover/OpenER)
 
 This repository is a fork of the Earth Rover Agribot. Contains thoughts on Open Hardware Ag robot & investigations into a ROS2 port. 
+
+# BOM (mostly) open hardware
+
+-  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano, upgrade if needed. 
+- [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
+- [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
+- [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
+- [BLDC motor TBD]
+- Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
+- Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
+- Hang a [BLDC DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS2 in development](https://github.com/deltaxrobot/Delta-X-Software)
+
+# Navigation
+- Visually follow crop rows using Tensorflow model to GPS waypoints, at GPS waypoint find next crop row. 
+
+# Software
+- [Dashing on Nano](https://github.com/ANI717/Headless-Jetson-Nano-Setup)
+- [Swappy ROS2 Rover for Ackerman drive/ Teleop](https://github.com/mgonzs13/ros2_rover)
+- [Tensorflow model to follow crop rows](https://github.com/ANI717/ANI717_Robotics#design-diagram)
+
+
+# Notes
+- https://github.com/NMBURobotics/vox_nav
+- Maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
+- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
+- [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
+- [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering, if starting from Jetbot may need skid to start with.
+
+
+
+Overview
+------
 
 Looks like original Earth Rover is running on Xavier, Ubuntu 20.04 & Foxy? Dashing?
 
@@ -11,32 +42,8 @@ Looks like original Earth Rover is running on Xavier, Ubuntu 20.04 & Foxy? Dashi
 [ROS2 RTK](https://github.com/aussierobots/ublox_dgnss)
 
 Integrate [visual servoing](https://github.com/PRBonn/visual-crop-row-navigation#readme) or [Neural network somehow](https://github.com/samuk/ANI717_Robotics)?
-
-# BOM (mostly) open hardware 4x4 drive 
-
--  Open source [Jetson baseboard](https://capablerobot.com/products/nx-baseboard/) start with a Nano, upgrade if needed. 
-- [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
-- [4 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
-- [Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
-- Body TBD maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
-- [Wheels](https://www.aliexpress.com/item/32839959696.html) 
-- Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
-- Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
-- Hang a [DeltaX](https://www.deltaxrobot.com/) off the bottom? [ROS1](https://github.com/deltaxrobot/Delta-X-Software)
-
- ![rover](https://github.com/tlalexander/rover_designs/raw/master/images/rover_beach.jpg)
-
-# Possible
-- [Swappy ROS2 Mars Rover](https://github.com/mgonzs13/ros2_rover)
-- [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
-- [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
-- [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering, if starting from Jetbot may need skid to start with.
-
-
-
-Overview
-------
 - [earth_rover_localization](https://github.com/earthrover/earth_rover_localization/tree/master/earth_rover_localization): ROS package to configure the EKF of the robot_localization package. 
+- 
 
 Would need to edit to reflect alternate RTK/ IMU
 - Uses sensor fusion of GPS [Piksy Multi](https://www.swiftnav.com/piksi-multi) and IMU [MTi-3 AHRS](https://www.xsens.com/products/mti-1-series/)
