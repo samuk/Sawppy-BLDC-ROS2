@@ -8,12 +8,12 @@ Thoughts on ROS2 Open Hardware robot
 - ~£40 [Improved suspension from SRA](https://twitter.com/SmallRobotArmy/status/1476667953546346530)
 - ~£20 [Open Core running uROS](https://github.com/rosmo-robot/Open-Core-M5stack/blob/main/README.md)
 - ~£90 [3 x dual channel SimpleFOC motor controllers](https://github.com/rosmo-robot/Rosmo_ESC)
-- ~100[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - ~£240 [6x 4108 BLDC motor TBD](https://s.click.aliexpress.com/e/_AE2SCu)
 - ~70 [4 x 35kg servo](https://www.hiwonder.hk/products/hiwonder-hts-35h-high-voltage-bus-servo-35kg-torque-with-data-feedback)
 - ~£100 Jehu [18650 battery pack](https://jag35.com/collections/pcb-based-products/products/high-power-18650-battery-module-diy-pcb-kit-75x)
 
 # optional extras
+- ~100[Tinkerforge IMU](https://www.tinkerforge.com/en/shop/bricks/imu-v2-brick.html) [ROS2 ](https://discourse.ros.org/t/ros-tinkerforge-imu-v2-bricks-driver/15539)
 - ~£170 [ZED-F9P Sparkfun RTK](https://www.ardusimple.com/rtk-open-source-hardware/) Or maybe [$$Ark](https://arkelectron.com/product/ark-rtk-gps/)
 - ~£200 Hang a [Nindmani Delta](https://github.com/AutoRoboCulture/nindamani-the-weed-removal-robot)
 - ~£40 Meshtastic for [RTK comms](https://meshtastic.discourse.group/) latency a problem?
@@ -29,16 +29,12 @@ Thoughts on ROS2 Open Hardware robot
 
 The core of this navigation strategy is the VisualServoing and the local planner packages
 
-
-
 # Notes
 - https://github.com/NMBURobotics/vox_nav
 - Maybe add 4x4 steer using BLDC to [Rover](https://github.com/tlalexander/rover_designs)
 - [Radxa CM3 module](https://www.cnx-software.com/2021/11/07/radxa-cm3-raspberry-pi-cm4-alternative/) in [Carrier board](https://hackaday.io/project/165108-carrier-board-for-the-raspberry-pi-compute-module) probably underpowered.
 - [Acorn Motherboard?](https://github.com/Twisted-Fields/acorn-robot-electronics/blob/main/README.md) Unclear what value added if going ROS2 route.
 - [Nema23 BLDC](https://www.aliexpress.com/item/32799131056.html) for steering, if starting from Jetbot may need skid to start with.
-
-
 
 Overview
 ------
